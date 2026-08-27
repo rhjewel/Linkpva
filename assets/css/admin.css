@@ -1,0 +1,52 @@
+/* ThemeOption Dashboard Logo css  */
+#adminmenu div.wp-menu-image img {
+    height: 20px;
+    padding: 5px 0 0;
+}
+
+/* dashboard  */
+div#primary_case_category h2 {
+    padding: 0 10px !important;
+    font-size: 13px;
+}
+
+div#primary_case_category.postbox>.inside {
+    color: inherit;
+    margin: 0;
+    padding: 0 10px;
+}
+
+div#primary_case_category.postbox>.inside select {
+    width: 80%;
+}
+
+/* CSF Code  */
+.csf-field h4 {
+    margin: 0;
+}
+
+.egns_header_select.csf-field-image_select .csf--active figure {
+    border-color: rgb(34 34 34 / 20%);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+}
+
+.egns_header_select.csf-field-image_select figure img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: top;
+    box-shadow: 0 0 2px rgb(0 0 0 / 30%);
+}
+
+.csf-field.csf-field-textarea.egns_desc textarea {
+    width: 50%;
+}
+
+.csf-field.csf-field-textarea.egns_desc.shortcode textarea {
+    width: 50%;
+    min-height: 60px;
+}
+
+.csf-field-media.egns_mda .csf--placeholder input {
+    width: 50%;
+    margin: 0;
+}

@@ -1,0 +1,101 @@
+<wpml-config>
+  <custom-types>
+    <custom-type translate="1">e-floating-buttons</custom-type>
+    <custom-type translate="1">elementor_component</custom-type>
+    <custom-type translate="1">elementor_library</custom-type>
+    <custom-type translate="1">product</custom-type>
+    <custom-type translate="1">product_variation</custom-type>
+    <custom-type translate="1">shop_order</custom-type>
+    <custom-type translate="1">shop_order_refund</custom-type>
+    <custom-type translate="1">shop_coupon</custom-type>
+    <custom-type translate="1">shop_order_placehold</custom-type>
+    <custom-type translate="1">wpcf7_contact_form</custom-type>
+    <custom-type translate="1">mc4wp-form</custom-type>
+    <custom-type translate="1">career</custom-type>
+    <custom-type translate="1">people</custom-type>
+    <custom-type translate="1">case-study</custom-type>
+    <custom-type translate="1">mega-menu</custom-type>
+    <custom-type translate="1">header-blocks</custom-type>
+    <custom-type translate="1">footer-blocks</custom-type>
+  </custom-types>
+  <taxonomies>
+    <taxonomy translate="1">elementor_library_type</taxonomy>
+    <taxonomy translate="1">elementor_library_category</taxonomy>
+    <taxonomy translate="1">product_brand</taxonomy>
+    <taxonomy translate="1">product_type</taxonomy>
+    <taxonomy translate="1">product_visibility</taxonomy>
+    <taxonomy translate="1">product_cat</taxonomy>
+    <taxonomy translate="1">product_tag</taxonomy>
+    <taxonomy translate="1">product_shipping_class</taxonomy>
+    <taxonomy translate="1">pos_product_visibility</taxonomy>
+    <taxonomy translate="1">translation_priority</taxonomy>
+    <taxonomy translate="1">career-category</taxonomy>
+    <taxonomy translate="1">career-tag</taxonomy>
+    <taxonomy translate="1">people-category</taxonomy>
+    <taxonomy translate="1">people-tag</taxonomy>
+    <taxonomy translate="1">case-study-category</taxonomy>
+    <taxonomy translate="1">case-study-tag</taxonomy>
+  </taxonomies>
+  <custom-fields>
+    <custom-field action="copy">egns_career_meta_id</custom-field>
+    <custom-field action="copy">egns_casestudy_meta_id</custom-field>
+    <custom-field action="copy">egns_people_meta_id</custom-field>
+  </custom-fields>
+  <admin-texts>
+    <key name="egns_theme_options">
+      <key name="breadcrumb_cpt_creer_heading"/>
+      <key name="breadcrumb_cpt_people_heading"/>
+      <key name="404_title"/>
+      <key name="404_button_text"/>
+      <key name="404_image">
+        <key name="alt"/>
+        <key name="title"/>
+      </key>
+    </key>
+    <key name="widget_egns_blog_tags_custom">
+      <key name="1">
+        <key name="title"/>
+      </key>
+    </key>
+    <key name="widget_egns_popular_post">
+      <key name="1">
+        <key name="title"/>
+      </key>
+    </key>
+    <key name="widget_egns_product_category">
+      <key name="1">
+        <key name="title"/>
+      </key>
+    </key>
+    <key name="widget_egns_product_tags_custom">
+      <key name="1">
+        <key name="title"/>
+      </key>
+    </key>
+    <key name="widget_egns_table_cnt_custom">
+      <key name="1">
+        <key name="title"/>
+        <key name="items">
+          <key name="0">
+            <key name="label"/>
+          </key>
+          <key name="1">
+            <key name="label"/>
+          </key>
+          <key name="2">
+            <key name="label"/>
+          </key>
+          <key name="3">
+            <key name="label"/>
+          </key>
+          <key name="4">
+            <key name="label"/>
+          </key>
+          <key name="5">
+            <key name="label"/>
+          </key>
+        </key>
+      </key>
+    </key>
+  </admin-texts>
+</wpml-config>
