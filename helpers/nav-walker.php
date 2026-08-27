@@ -109,7 +109,7 @@ class Egns_Menu_Walker extends Walker_Nav_Menu
 
         // ADD ICON AFTER </a>
         if (in_array('menu-item-has-children', $classes) || ($depth === 0 && $enabel_megamenu)) {
-            $item_output .= ' <i class="d-lg-none d-flex bi bi-plus dropdown-icon"></i>';
+            $item_output .= '';
         }
 
         $item_output .= $args->after;

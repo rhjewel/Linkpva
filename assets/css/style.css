@@ -105,11 +105,6 @@ svg {
   outline-offset: 3px;
 }
 
-::-moz-selection {
-  color: #fff;
-  background: var(--color-primary);
-}
-
 ::selection {
   color: #fff;
   background: var(--color-primary);
@@ -630,8 +625,12 @@ svg {
   font-size: 13px;
   font-weight: 600;
 }
-.linkpva-hero-points i {
+.linkpva-hero-points i,
+.linkpva-hero-points svg {
   color: var(--color-success);
+}
+.linkpva-hero-points svg path {
+  fill: currentColor;
 }
 
 .linkpva-hero-visual {
@@ -783,14 +782,22 @@ svg {
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(12px);
 }
-.linkpva-floating-card > i {
+.linkpva-floating-card > i,
+.linkpva-floating-card > svg {
   display: grid;
   width: 34px;
   height: 34px;
   place-items: center;
+  flex: 0 0 auto;
   color: var(--color-primary);
   background: var(--color-primary-light);
   border-radius: 8px;
+}
+.linkpva-floating-card > svg {
+  padding: 8px;
+}
+.linkpva-floating-card > svg path {
+  fill: currentColor;
 }
 .linkpva-floating-card strong,
 .linkpva-floating-card small {
@@ -842,7 +849,8 @@ svg {
 .linkpva-trust-item:last-child {
   border-right: 0;
 }
-.linkpva-trust-item > i {
+.linkpva-trust-item > i,
+.linkpva-trust-item > svg {
   display: grid;
   width: 42px;
   height: 42px;
@@ -852,6 +860,12 @@ svg {
   background: var(--color-primary-light);
   border-radius: 10px;
   font-size: 18px;
+}
+.linkpva-trust-item > svg {
+  padding: 11px;
+}
+.linkpva-trust-item > svg path {
+  fill: currentColor;
 }
 .linkpva-trust-item strong,
 .linkpva-trust-item small {
@@ -996,8 +1010,7 @@ svg {
 .linkpva-product-visual > img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   transition: all 0.25s ease;
 }
 .linkpva-product-visual.is-purple {
@@ -1546,8 +1559,7 @@ svg {
 .linkpva-blog-visual > img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   transition: all 0.25s ease;
 }
 .linkpva-blog-visual > i {
@@ -1956,30 +1968,16 @@ svg {
   .linkpva-primary-nav > ul > li > a::after {
     display: none;
   }
-  .linkpva-primary-nav .dropdown-icon {
-    display: none !important;
-  }
   .linkpva-primary-nav .menu-item-has-children > a {
     padding-right: 44px;
   }
   .linkpva-primary-nav .menu-item-has-children > a::before {
-    display: none;
+    right: 10px;
+    display: block;
+    content: "\f282";
   }
-  .linkpva-primary-nav .menu-item-has-children > .dropdown-icon {
-    position: absolute;
-    top: 2px;
-    right: 0;
-    z-index: 2;
-    display: grid !important;
-    width: 40px;
-    height: 40px;
-    place-items: center;
-    color: var(--color-accent);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  .linkpva-primary-nav .menu-item-has-children.is-submenu-open > .dropdown-icon {
-    transform: rotate(45deg);
+  .linkpva-primary-nav .menu-item-has-children.is-submenu-open > a::before {
+    transform: translateY(-50%) rotate(180deg);
   }
   .linkpva-primary-nav .sub-menu {
     position: static;
@@ -2001,6 +1999,10 @@ svg {
     border-left: 1px solid var(--color-border);
     border-radius: 0;
     font-size: 13px;
+  }
+  .linkpva-primary-nav .sub-menu .menu-item-has-children > a::before {
+    right: 10px;
+    content: "\f282";
   }
   .linkpva-primary-nav .sub-menu .sub-menu {
     padding-left: 13px;
@@ -2606,8 +2608,7 @@ svg {
 .linkpva-product-main-visual > img {
   width: 100%;
   min-height: inherit;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .linkpva-product-thumbnails {
@@ -2629,8 +2630,7 @@ svg {
 .linkpva-product-thumbnails button img {
   width: 100%;
   height: 80px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .linkpva-product-thumbnails button.is-active, .linkpva-product-thumbnails button:hover {
   border-color: var(--color-primary);
@@ -3137,6 +3137,10 @@ svg {
   background: #ecfdf3;
 }
 
+.linkpva-price-icon svg path {
+  fill: currentColor;
+}
+
 .linkpva-pricing-note {
   display: flex;
   align-items: center;
@@ -3344,8 +3348,7 @@ svg {
   display: block;
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .linkpva-article-layout {
@@ -3592,14 +3595,8 @@ svg {
     text-align: left;
     text-transform: uppercase;
   }
-  .linkpva-pricing-table tbody td:nth-of-type(1)::before {
-    content: "Starting price";
-  }
-  .linkpva-pricing-table tbody td:nth-of-type(2)::before {
-    content: "Best for";
-  }
-  .linkpva-pricing-table tbody td:nth-of-type(3)::before {
-    content: "Details";
+  .linkpva-pricing-table tbody td::before {
+    content: attr(data-label);
   }
   .linkpva-pricing-table tbody td:last-child {
     border-bottom: 0;
@@ -3692,4 +3689,4 @@ svg {
   .linkpva-article-content {
     font-size: 15px;
   }
-}/*# sourceMappingURL=style.css.map */
+}

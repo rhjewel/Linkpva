@@ -678,8 +678,13 @@ svg {
         font-weight: 600;
     }
 
-    i {
+    i,
+    svg {
         color: var(--color-success);
+    }
+
+    svg path {
+        fill: currentColor;
     }
 }
 
@@ -845,14 +850,24 @@ svg {
     box-shadow: var(--shadow-md);
     backdrop-filter: blur(12px);
 
-    >i {
+    >i,
+    >svg {
         display: grid;
         width: 34px;
         height: 34px;
         place-items: center;
+        flex: 0 0 auto;
         color: var(--color-primary);
         background: var(--color-primary-light);
         border-radius: 8px;
+    }
+
+    >svg {
+        padding: 8px;
+
+        path {
+            fill: currentColor;
+        }
     }
 
     strong,
@@ -909,7 +924,8 @@ svg {
         border-right: 0;
     }
 
-    >i {
+    >i,
+    >svg {
         display: grid;
         width: 42px;
         height: 42px;
@@ -919,6 +935,14 @@ svg {
         background: var(--color-primary-light);
         border-radius: 10px;
         font-size: 18px;
+    }
+
+    >svg {
+        padding: 11px;
+
+        path {
+            fill: currentColor;
+        }
     }
 
     strong,
@@ -2167,35 +2191,20 @@ svg {
             }
         }
 
-        .dropdown-icon {
-            display: none !important;
-        }
 
         .menu-item-has-children {
             >a {
                 padding-right: 44px;
 
                 &::before {
-                    display: none;
+                    right: 10px;
+                    display: block;
+                    content: "\f282";
                 }
             }
 
-            >.dropdown-icon {
-                position: absolute;
-                top: 2px;
-                right: 0;
-                z-index: 2;
-                display: grid !important;
-                width: 40px;
-                height: 40px;
-                place-items: center;
-                color: var(--color-accent);
-                cursor: pointer;
-                transition: transform 0.2s ease;
-            }
-
-            &.is-submenu-open>.dropdown-icon {
-                transform: rotate(45deg);
+            &.is-submenu-open>a::before {
+                transform: translateY(-50%) rotate(180deg);
             }
         }
 
@@ -2219,6 +2228,12 @@ svg {
                 border-left: 1px solid var(--color-border);
                 border-radius: 0;
                 font-size: 13px;
+            }
+
+
+            .menu-item-has-children>a::before {
+                right: 10px;
+                content: "\f282";
             }
 
         }
@@ -3537,6 +3552,10 @@ svg {
     background: #ecfdf3;
 }
 
+.linkpva-price-icon svg path {
+    fill: currentColor;
+}
+
 .linkpva-pricing-note {
     display: flex;
     align-items: center;
@@ -4044,16 +4063,8 @@ svg {
             text-transform: uppercase;
         }
 
-        tbody td:nth-of-type(1)::before {
-            content: "Starting price";
-        }
-
-        tbody td:nth-of-type(2)::before {
-            content: "Best for";
-        }
-
-        tbody td:nth-of-type(3)::before {
-            content: "Details";
+        tbody td::before {
+            content: attr(data-label);
         }
 
         tbody td:last-child {
