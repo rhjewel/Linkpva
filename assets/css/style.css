@@ -1637,6 +1637,9 @@ svg {
   border-radius: var(--radius-lg);
   box-shadow: 0 22px 50px rgba(37, 99, 235, 0.2);
 }
+.linkpva-bulk-inner.has-no-icon {
+  grid-template-columns: 1fr auto;
+}
 .linkpva-bulk-inner h2 {
   margin-bottom: 7px;
   color: #fff;
@@ -1646,7 +1649,7 @@ svg {
   margin: 0;
   font-size: 13px;
 }
-.linkpva-bulk-inner > div:nth-child(2) > span {
+.linkpva-bulk-inner .linkpva-bulk-content > span {
   display: block;
   margin-bottom: 5px;
   color: #b9d0ff;
@@ -2064,10 +2067,16 @@ svg {
   .linkpva-bulk-inner {
     grid-template-columns: auto 1fr;
   }
+  .linkpva-bulk-inner.has-no-icon {
+    grid-template-columns: 1fr;
+  }
   .linkpva-bulk-inner .linkpva-button {
     grid-column: 1/-1;
     justify-self: start;
     margin-left: 91px;
+  }
+  .linkpva-bulk-inner.has-no-icon .linkpva-button {
+    margin-left: 0;
   }
 }
 @media (max-width: 767.98px) {

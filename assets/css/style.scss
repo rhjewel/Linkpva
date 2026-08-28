@@ -1812,6 +1812,10 @@ svg {
     border-radius: var(--radius-lg);
     box-shadow: 0 22px 50px rgba(37, 99, 235, 0.2);
 
+    &.has-no-icon {
+        grid-template-columns: 1fr auto;
+    }
+
     h2 {
         margin-bottom: 7px;
         color: #fff;
@@ -1823,7 +1827,7 @@ svg {
         font-size: 13px;
     }
 
-    >div:nth-child(2)>span {
+    .linkpva-bulk-content>span {
         display: block;
         margin-bottom: 5px;
         color: #b9d0ff;
@@ -2317,10 +2321,18 @@ svg {
     .linkpva-bulk-inner {
         grid-template-columns: auto 1fr;
 
+        &.has-no-icon {
+            grid-template-columns: 1fr;
+        }
+
         .linkpva-button {
             grid-column: 1 / -1;
             justify-self: start;
             margin-left: 91px;
+        }
+
+        &.has-no-icon .linkpva-button {
+            margin-left: 0;
         }
     }
 }
