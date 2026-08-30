@@ -11,8 +11,8 @@ if (class_exists('WooCommerce')) {
      * */
     function aventis_wrapper_start()
     {
-        echo '<div class="shop-page-wrapper mt-120 mb-120">
-    <div class="container one">';
+        echo '<div class="shop-page-wrapper">
+    <div class="container">';
     }
 
     function aventis_wrapper_end()
@@ -213,7 +213,7 @@ if (class_exists('WooCommerce')) {
         $category_name = (!is_wp_error($categories) && !empty($categories)) ? $categories[0]->name : '';
         $visual_classes = array('', 'is-purple', 'is-cyan', 'is-green');
         $visual_class = $visual_classes[absint($visual_index) % count($visual_classes)];
-        ?>
+?>
         <div class="<?php echo esc_attr($column_class); ?>">
             <article class="linkpva-product-card">
                 <div class="linkpva-product-visual<?php echo $visual_class ? ' ' . esc_attr($visual_class) : ''; ?>">
@@ -251,7 +251,7 @@ if (class_exists('WooCommerce')) {
                 </div>
             </article>
         </div>
-        <?php
+    <?php
     }
 
     /**
@@ -305,8 +305,8 @@ if (class_exists('WooCommerce')) {
 
         $shop_url = wc_get_page_permalink('shop');
         $heading_id = 'linkpva-related-products-heading-' . $current_product_id;
-        ?>
-        <section class="linkpva-section linkpva-products" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
+    ?>
+        <section class="linkpva-products" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
             <div class="container">
                 <div class="linkpva-heading-row">
                     <div class="linkpva-section-heading">
@@ -324,7 +324,7 @@ if (class_exists('WooCommerce')) {
                 </div>
             </div>
         </section>
-        <?php
+    <?php
     }
 
     function egns_related_products_output()
@@ -362,42 +362,6 @@ if (class_exists('WooCommerce')) {
      */
     remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20);
     add_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 9);
-
-    /**
-     * Buy Now button after single product add to cart button
-     */
-    function aventis_single_product_buy_now_button()
-    {
-        global $product;
-
-        if (! $product || ! is_a($product, 'WC_Product')) {
-            return;
-        }
-
-        // Show only for simple products
-        if (! $product->is_type('simple')) {
-            return;
-        }
-
-        $buy_now_url = add_query_arg(
-            array(
-                'add-to-cart' => $product->get_id(),
-                'quantity'    => 1,
-            ),
-            wc_get_checkout_url()
-        );
-    ?>
-        <a class="primary-btn3 two" href="<?php echo esc_url($buy_now_url); ?>">
-            <span data-text="<?php esc_attr_e('Buy Now', 'linkpva'); ?>"><?php esc_html_e('Buy Now', 'linkpva'); ?></span>
-            <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <path d="M8.88883 5L2.22217 10L2.22217 0L8.88883 5Z"></path>
-                </g>
-            </svg>
-        </a>
-<?php
-    }
-    add_action('woocommerce_after_add_to_cart_button', 'aventis_single_product_buy_now_button');
 
 
     /**
@@ -451,7 +415,7 @@ if (class_exists('WooCommerce')) {
     add_filter('woocommerce_get_image_size_gallery_thumbnail', function ($size) {
         return array(
             'width'  => 200,
-            'height' => 250,
+            'height' => 200,
             'crop'   => 0,
         );
     });

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The Template for displaying product archives, including the main shop page which is a post type archive
  *
@@ -33,6 +32,8 @@ if (!is_front_page()) {
  * @hooked WC_Structured_Data::generate_website_data() - 30
  */
 do_action('woocommerce_before_main_content');
+
+global $wp_query;
 
 $account_type_taxonomy = function_exists('aventis_get_product_attribute_taxonomy') ? aventis_get_product_attribute_taxonomy('Account Type') : '';
 $account_age_taxonomy = function_exists('aventis_get_product_attribute_taxonomy') ? aventis_get_product_attribute_taxonomy('Account Age') : '';
@@ -129,7 +130,9 @@ if (is_product_taxonomy()) {
 						<?php do_action('egns_aventis_shop_page_no_products'); ?>
 					<?php endif; ?>
 				</div>
-				<div data-product-pagination-wrap><?php echo aventis_get_product_archive_pagination($current_page, $wp_query->max_num_pages, $archive_url); ?></div>
+				<div data-product-pagination-wrap>
+					<?php echo aventis_get_product_archive_pagination($current_page, $wp_query->max_num_pages, $archive_url); ?>
+				</div>
 				<div class="screen-reader-text" aria-live="polite" aria-atomic="true" data-product-status></div>
 			</div>
 		</div>

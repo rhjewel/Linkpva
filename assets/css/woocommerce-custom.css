@@ -306,6 +306,148 @@ a.added_to_cart.wc-forward:hover {
 
 /* Product details page css */
 
+.woocommerce div.product .linkpva-product-summary .woocommerce-product-details__short-description > :last-child {
+  margin-bottom: 0;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-stock.is-outofstock {
+  color: #dc2626;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-product-price-large del {
+  margin-right: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.72em;
+  font-weight: 600;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-product-price-large ins {
+  background: transparent;
+  text-decoration: none;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row > form.cart {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row form.cart::before,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row form.cart::after {
+  display: none;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity {
+  display: flex;
+  height: 52px;
+  overflow: hidden;
+  float: none;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity .minus,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity .plus,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity .qty {
+  width: 42px;
+  height: 50px;
+  padding: 0;
+  color: var(--color-accent);
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+  text-align: center;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity .minus,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .quantity .plus {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .single_add_to_cart_button {
+  min-height: 52px;
+  flex: 1 1 220px;
+  padding: 12px 22px;
+  color: #fff;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .single_add_to_cart_button:hover {
+  color: #fff;
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row form.variations_form,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row form.grouped_form {
+  display: block;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations {
+  width: 100%;
+  margin: 25px 0;
+  padding: 22px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations th,
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations td {
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations tbody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations tr {
+  display: block;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: var(--color-accent);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+}
+
+.woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .single_variation_wrap .variations_button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 575px) {
+  .woocommerce div.product .linkpva-product-summary .linkpva-purchase-row .variations tbody {
+    grid-template-columns: 1fr;
+  }
+}
+
 .woocommerce div.product div.images,
 .woocommerce-page div.product div.images {
   float: none;
