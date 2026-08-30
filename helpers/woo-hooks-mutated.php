@@ -3,11 +3,7 @@
 **** WooCommerce Hooks ****
 --------------------------*/
 
-use Egns\Helper\Egns_Helper;
-
 if (class_exists('WooCommerce')) {
-    global $product;
-
     /**
      * 
      * WooCommerce before, after wrapper div change
@@ -151,7 +147,115 @@ if (class_exists('WooCommerce')) {
 
 
     /**
-     * Archive page product card
+     * Get the Account Type product attribute value.
+     */
+    function egns_aventis_get_product_account_type($product)
+    {
+        if (!$product || !is_a($product, 'WC_Product')) {
+            return '';
+        }
+
+        foreach ($product->get_attributes() as $attribute) {
+            $attribute_name = $attribute->get_name();
+            $attribute_label = function_exists('wc_attribute_label') ? wc_attribute_label($attribute_name, $product) : $attribute_name;
+            $normalized_name = sanitize_title(preg_replace('/^pa_/', '', $attribute_name));
+
+            if ('account-type' !== $normalized_name && 'account-type' !== sanitize_title($attribute_label)) {
+                continue;
+            }
+
+            $values = $attribute->is_taxonomy()
+                ? wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'names'))
+                : $attribute->get_options();
+
+            if (!is_wp_error($values)) {
+                $values = array_values(array_filter(array_map('sanitize_text_field', (array) $values)));
+                return implode(', ', $values);
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Get newline-separated Product Features from the Codestar product meta.
+     */
+    function egns_aventis_get_product_features($product_id, $limit = 3)
+    {
+        $product_meta = get_post_meta($product_id, 'EGNS_PRODUCT_META_ID', true);
+        $features = is_array($product_meta) ? ($product_meta['product_feature_lbl'] ?? '') : '';
+
+        if ('' === trim((string) $features)) {
+            $features = get_post_meta($product_id, 'product_feature_lbl', true);
+        }
+
+        $features = preg_split('/\r\n|\r|\n/', wp_strip_all_tags((string) $features));
+        $features = array_values(array_filter(array_map('trim', (array) $features)));
+
+        return array_slice($features, 0, max(1, absint($limit)));
+    }
+
+    /**
+     * Render the shared archive/related product card.
+     */
+    function egns_aventis_render_product_card($product, $column_class, $visual_index = 0, $feature_limit = 3)
+    {
+        if (!$product || !is_a($product, 'WC_Product') || !$product->is_visible()) {
+            return;
+        }
+
+        $product_id = $product->get_id();
+        $product_title = $product->get_name();
+        $product_permalink = $product->get_permalink();
+        $account_type = egns_aventis_get_product_account_type($product);
+        $features = egns_aventis_get_product_features($product_id, $feature_limit);
+        $categories = get_the_terms($product_id, 'product_cat');
+        $category_name = (!is_wp_error($categories) && !empty($categories)) ? $categories[0]->name : '';
+        $visual_classes = array('', 'is-purple', 'is-cyan', 'is-green');
+        $visual_class = $visual_classes[absint($visual_index) % count($visual_classes)];
+        ?>
+        <div class="<?php echo esc_attr($column_class); ?>">
+            <article class="linkpva-product-card">
+                <div class="linkpva-product-visual<?php echo $visual_class ? ' ' . esc_attr($visual_class) : ''; ?>">
+                    <?php if ($account_type) : ?>
+                        <span class="linkpva-product-badge"><?php echo esc_html($account_type); ?></span>
+                    <?php endif; ?>
+                    <?php
+                    if ($product->get_image_id()) {
+                        echo wp_get_attachment_image($product->get_image_id(), 'woocommerce_thumbnail', false, array(
+                            'alt'      => $product_title,
+                            'loading'  => 'lazy',
+                            'decoding' => 'async',
+                        ));
+                    } else {
+                        echo wc_placeholder_img('woocommerce_thumbnail', array('alt' => $product_title));
+                    }
+                    ?>
+                </div>
+                <div class="linkpva-product-body">
+                    <?php if ($category_name) : ?>
+                        <span class="linkpva-product-category"><?php echo esc_html($category_name); ?></span>
+                    <?php endif; ?>
+                    <h3><a href="<?php echo esc_url($product_permalink); ?>"><?php echo esc_html($product_title); ?></a></h3>
+                    <?php if ($features) : ?>
+                        <ul>
+                            <?php foreach ($features as $feature) : ?>
+                                <li><i class="bi bi-check2" aria-hidden="true"></i> <?php echo esc_html($feature); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <div class="linkpva-product-footer">
+                        <strong><?php echo wp_kses_post($product->get_price_html()); ?></strong>
+                        <a href="<?php echo esc_url($product_permalink); ?>" aria-label="<?php echo esc_attr(sprintf(__('View %s details', 'linkpva'), $product_title)); ?>"><i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <?php
+    }
+
+    /**
+     * Archive page product card.
      */
     function egns_aventis_shop_product_card()
     {
@@ -161,187 +265,66 @@ if (class_exists('WooCommerce')) {
             return;
         }
 
-        $product_id        = $product->get_id();
-        $product_title     = $product->get_name();
-        $product_permalink = get_permalink($product_id);
-        $product_price     = $product->get_price_html();
-        $product_image     = get_the_post_thumbnail_url($product_id, 'full');
-        $product_image     = $product_image ? $product_image : wc_placeholder_img_src();
-        $rating_count      = $product->get_rating_count();
-        $average_rating    = $product->get_average_rating();
-        $review_count      = $product->get_review_count();
-
-        $add_to_cart_url   = $product->add_to_cart_url();
-        $add_to_cart_text  = $product->add_to_cart_text();
-        $product_type      = $product->get_type();
-        $product_sku       = $product->get_sku();
-
-        $button_classes = implode(' ', array_filter(array(
-            'cart',
-            'button',
-            'product_type_' . $product->get_type(),
-            $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
-            ($product->supports('ajax_add_to_cart') && $product->get_type() === 'simple') ? 'ajax_add_to_cart' : '',
-        )));
-?>
-
-
-        <div class="col-md-6 col-xl-4">
-            <article class="linkpva-product-card">
-                <div class="linkpva-product-visual"><span
-                        class="linkpva-product-badge">Verified</span><img
-                        src="assets/images/products/product-verified.webp" width="1200" height="750"
-                        alt="Verified professional account preview" loading="lazy" decoding="async">
-                </div>
-                <div class="linkpva-product-body"><span class="linkpva-product-category">Verified
-                        Account</span>
-                    <h3><a href="product-details.html">Verified LinkedIn Account</a></h3>
-                    <ul>
-                        <li><i class="bi bi-check2"></i> Verification details</li>
-                        <li><i class="bi bi-check2"></i> Completed profile</li>
-                        <li><i class="bi bi-check2"></i> Delivery information</li>
-                    </ul>
-                    <div class="linkpva-product-footer"><strong>$49.00</strong><a
-                            href="product-details.html" aria-label="View product"><i
-                                class="bi bi-arrow-right"></i></a></div>
-                </div>
-            </article>
-        </div>
-
-    <?php
+        static $card_index = 0;
+        egns_aventis_render_product_card($product, 'col-md-6 col-xl-4', $card_index, 3);
+        $card_index++;
     }
     add_action('egns_aventis_shop_page_product_card', 'egns_aventis_shop_product_card');
 
-
-
     /**
-     * Add Custom WooCommerce Related Product card
+     * Add custom WooCommerce related product cards.
      */
     function egns_woocommerce_related_products($current_product_id, $limit = 3)
     {
-        if (!$current_product_id || !class_exists('WooCommerce')) {
+        $current_product_id = absint($current_product_id);
+        $limit = max(1, absint($limit));
+
+        if (!$current_product_id || !function_exists('wc_get_related_products')) {
             return;
         }
 
-        // Get product categories
-        $cat_terms   = wp_get_post_terms($current_product_id, 'product_cat');
-        $categories  = wp_list_pluck($cat_terms, 'term_id');
+        $related_ids = wc_get_related_products($current_product_id, $limit * 3, array($current_product_id));
+        $related_products = array();
 
-        // Get product tags
-        $tag_terms = wp_get_post_terms($current_product_id, 'product_tag');
-        $tags      = wp_list_pluck($tag_terms, 'term_id');
+        foreach ($related_ids as $related_id) {
+            $related_product = wc_get_product($related_id);
 
-        // Build tax query safely
-        $tax_query = array();
-
-        if (!empty($categories) || !empty($tags)) {
-            $tax_query['relation'] = 'OR';
-
-            if (!empty($categories)) {
-                $tax_query[] = array(
-                    'taxonomy' => 'product_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $categories,
-                );
+            if (!$related_product || 'publish' !== get_post_status($related_id) || !$related_product->is_visible()) {
+                continue;
             }
 
-            if (!empty($tags)) {
-                $tax_query[] = array(
-                    'taxonomy' => 'product_tag',
-                    'field'    => 'term_id',
-                    'terms'    => $tags,
-                );
+            $related_products[] = $related_product;
+            if (count($related_products) >= $limit) {
+                break;
             }
-        } else {
-            return; // No categories/tags, so no related products
         }
 
-        $args = array(
-            'post_type'           => 'product',
-            'post_status'         => 'publish',
-            'posts_per_page'      => $limit,
-            'post__not_in'        => array($current_product_id),
-            'orderby'             => 'rand',
-            'ignore_sticky_posts' => 1,
-            'tax_query'           => $tax_query,
-        );
-
-        $related_products = new WP_Query($args);
-
-        if (!$related_products->have_posts()) {
-            wp_reset_postdata();
+        if (!$related_products) {
             return;
         }
-    ?>
-        <section class="linkpva-section linkpva-products">
+
+        $shop_url = wc_get_page_permalink('shop');
+        $heading_id = 'linkpva-related-products-heading-' . $current_product_id;
+        ?>
+        <section class="linkpva-section linkpva-products" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
             <div class="container">
                 <div class="linkpva-heading-row">
-                    <div class="linkpva-section-heading"><span class="linkpva-section-tag">You May Also Like</span>
-                        <h2>Related Products</h2>
-                    </div><a class="linkpva-text-link" href="shop.html">View all products <i
-                            class="bi bi-arrow-right"></i></a>
+                    <div class="linkpva-section-heading">
+                        <span class="linkpva-section-tag"><?php esc_html_e('You May Also Like', 'linkpva'); ?></span>
+                        <h2 id="<?php echo esc_attr($heading_id); ?>"><?php esc_html_e('Related Products', 'linkpva'); ?></h2>
+                    </div>
+                    <?php if ($shop_url) : ?>
+                        <a class="linkpva-text-link" href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('View all products', 'linkpva'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    <?php endif; ?>
                 </div>
                 <div class="row g-4">
-                    <div class="col-md-6 col-lg-4">
-                        <article class="linkpva-product-card">
-                            <div class="linkpva-product-visual is-purple"><span
-                                    class="linkpva-product-badge">Aged</span><img
-                                    src="assets/images/products/product-aged-5y.webp" width="1200" height="750"
-                                    alt="Established aged account preview" loading="lazy" decoding="async"></div>
-                            <div class="linkpva-product-body"><span class="linkpva-product-category">Old Account</span>
-                                <h3><a href="product-details.html">5+ Years Aged Account</a></h3>
-                                <ul>
-                                    <li><i class="bi bi-check2"></i> 5+ year age range</li>
-                                    <li><i class="bi bi-check2"></i> Clear profile details</li>
-                                </ul>
-                                <div class="linkpva-product-footer"><strong>$39.00</strong><a
-                                        href="product-details.html" aria-label="View 5+ Years Aged Account"><i
-                                            class="bi bi-arrow-right"></i></a></div>
-                            </div>
-                        </article>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <article class="linkpva-product-card">
-                            <div class="linkpva-product-visual is-cyan"><span
-                                    class="linkpva-product-badge">PVA</span><img
-                                    src="assets/images/products/product-pva.webp" width="1200" height="750"
-                                    alt="Phone-verified account preview" loading="lazy" decoding="async"></div>
-                            <div class="linkpva-product-body"><span class="linkpva-product-category">PVA Account</span>
-                                <h3><a href="product-details.html">LinkedIn PVA Account</a></h3>
-                                <ul>
-                                    <li><i class="bi bi-check2"></i> PVA information</li>
-                                    <li><i class="bi bi-check2"></i> Multiple options</li>
-                                </ul>
-                                <div class="linkpva-product-footer"><strong>$29.00</strong><a
-                                        href="product-details.html" aria-label="View LinkedIn PVA Account"><i
-                                            class="bi bi-arrow-right"></i></a></div>
-                            </div>
-                        </article>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <article class="linkpva-product-card">
-                            <div class="linkpva-product-visual is-green"><span
-                                    class="linkpva-product-badge">Followers</span><img
-                                    src="assets/images/products/product-followers.webp" width="1200" height="750"
-                                    alt="Account audience preview" loading="lazy" decoding="async"></div>
-                            <div class="linkpva-product-body"><span class="linkpva-product-category">Followers
-                                    Account</span>
-                                <h3><a href="product-details.html">Account With 1K+ Followers</a></h3>
-                                <ul>
-                                    <li><i class="bi bi-check2"></i> 1K+ follower range</li>
-                                    <li><i class="bi bi-check2"></i> Account information</li>
-                                </ul>
-                                <div class="linkpva-product-footer"><strong>$79.00</strong><a
-                                        href="product-details.html" aria-label="View Account With Followers"><i
-                                            class="bi bi-arrow-right"></i></a></div>
-                            </div>
-                        </article>
-                    </div>
+                    <?php foreach ($related_products as $index => $related_product) : ?>
+                        <?php egns_aventis_render_product_card($related_product, 'col-md-6 col-lg-4', $index + 1, 2); ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>
-    <?php
-        wp_reset_postdata();
+        <?php
     }
 
     function egns_related_products_output()

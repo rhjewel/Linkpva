@@ -38,15 +38,73 @@ function aventis_get_product_archive_posts_per_page()
     return max(1, absint(apply_filters('loop_shop_per_page', $posts_per_page)));
 }
 
-function aventis_build_product_archive_ajax_args($page, $search, $context)
+function aventis_get_product_attribute_taxonomy($attribute_label)
 {
+    if (!function_exists('wc_get_attribute_taxonomies') || !function_exists('wc_attribute_taxonomy_name')) {
+        return '';
+    }
+
+    $target = sanitize_title($attribute_label);
+
+    foreach (wc_get_attribute_taxonomies() as $attribute) {
+        $attribute_name = sanitize_title(str_replace('_', '-', $attribute->attribute_name));
+        $attribute_title = sanitize_title($attribute->attribute_label);
+
+        if ($target !== $attribute_name && $target !== $attribute_title) {
+            continue;
+        }
+
+        $taxonomy = wc_attribute_taxonomy_name($attribute->attribute_name);
+        return taxonomy_exists($taxonomy) ? $taxonomy : '';
+    }
+
+    return '';
+}
+
+function aventis_get_product_archive_orderby_options()
+{
+    $options = array(
+        'menu_order' => __('Default sorting', 'woocommerce'),
+        'popularity' => __('Sort by popularity', 'woocommerce'),
+        'rating'     => __('Sort by average rating', 'woocommerce'),
+        'date'       => __('Sort by latest', 'woocommerce'),
+        'price'      => __('Sort by price: low to high', 'woocommerce'),
+        'price-desc' => __('Sort by price: high to low', 'woocommerce'),
+    );
+
+    if (!wc_review_ratings_enabled()) {
+        unset($options['rating']);
+    }
+
+    return apply_filters('woocommerce_catalog_orderby', $options);
+}
+
+function aventis_sanitize_product_archive_values($values)
+{
+    return array_values(array_unique(array_filter(array_map('sanitize_title', (array) $values))));
+}
+
+function aventis_build_product_archive_ajax_args($page, $search, $context, $filters = array(), $orderby = '')
+{
+    $orderby_options = aventis_get_product_archive_orderby_options();
+    $default_orderby = apply_filters('woocommerce_default_catalog_orderby', get_option('woocommerce_default_catalog_orderby', 'menu_order'));
+    $orderby = isset($orderby_options[$orderby]) ? $orderby : $default_orderby;
+    $orderby = isset($orderby_options[$orderby]) ? $orderby : (string) array_key_first($orderby_options);
+    $ordering_args = WC()->query->get_catalog_ordering_args($orderby);
+
     $args = array(
         'post_type'           => 'product',
         'post_status'         => 'publish',
         'posts_per_page'      => aventis_get_product_archive_posts_per_page(),
         'paged'               => max(1, absint($page)),
         'ignore_sticky_posts' => true,
+        'orderby'             => $ordering_args['orderby'],
+        'order'               => $ordering_args['order'],
     );
+
+    if (!empty($ordering_args['meta_key'])) {
+        $args['meta_key'] = $ordering_args['meta_key'];
+    }
 
     if ('' !== $search) {
         $args['s'] = $search;
@@ -65,9 +123,18 @@ function aventis_build_product_archive_ajax_args($page, $search, $context)
                 'operator' => 'NOT IN',
             );
         }
+
+        if ('yes' === get_option('woocommerce_hide_out_of_stock_items') && !empty($product_visibility_terms['outofstock'])) {
+            $tax_query[] = array(
+                'taxonomy' => 'product_visibility',
+                'field'    => 'term_taxonomy_id',
+                'terms'    => array(absint($product_visibility_terms['outofstock'])),
+                'operator' => 'NOT IN',
+            );
+        }
     }
 
-    if (!empty($context['taxonomy']) && !empty($context['term_id']) && taxonomy_exists($context['taxonomy'])) {
+    if (!empty($context['taxonomy']) && !empty($context['term_id']) && taxonomy_exists($context['taxonomy']) && is_object_in_taxonomy('product', $context['taxonomy'])) {
         $tax_query[] = array(
             'taxonomy' => sanitize_key($context['taxonomy']),
             'field'    => 'term_id',
@@ -75,8 +142,42 @@ function aventis_build_product_archive_ajax_args($page, $search, $context)
         );
     }
 
+    $attribute_filters = array(
+        'product_category' => 'product_cat',
+        'account_type' => aventis_get_product_attribute_taxonomy('Account Type'),
+        'account_age'  => aventis_get_product_attribute_taxonomy('Account Age'),
+    );
+
+    foreach ($attribute_filters as $filter_key => $taxonomy) {
+        $selected_terms = aventis_sanitize_product_archive_values($filters[$filter_key] ?? array());
+
+        if ($taxonomy && $selected_terms) {
+            $tax_query[] = array(
+                'taxonomy' => $taxonomy,
+                'field'    => 'slug',
+                'terms'    => $selected_terms,
+                'operator' => 'IN',
+            );
+        }
+    }
+
     if (!empty($tax_query)) {
+        $tax_query['relation'] = 'AND';
         $args['tax_query'] = $tax_query;
+    }
+
+    $stock_options = function_exists('wc_get_product_stock_status_options') ? wc_get_product_stock_status_options() : array();
+    $stock_statuses = aventis_sanitize_product_archive_values($filters['stock_status'] ?? array());
+    $stock_statuses = array_values(array_intersect($stock_statuses, array_keys($stock_options)));
+
+    if ($stock_statuses) {
+        $args['meta_query'] = array(
+            array(
+                'key'     => '_stock_status',
+                'value'   => $stock_statuses,
+                'compare' => 'IN',
+            ),
+        );
     }
 
     return $args;
@@ -103,6 +204,72 @@ function aventis_render_product_archive_results($query)
     return ob_get_clean();
 }
 
+function aventis_get_product_archive_result_count($total, $page, $per_page)
+{
+    $total = absint($total);
+    $page = max(1, absint($page));
+    $per_page = max(1, absint($per_page));
+
+    if (!$total) {
+        return '<p class="woocommerce-result-count" role="status">' . esc_html__('No products found', 'woocommerce') . '</p>';
+    }
+
+    if ($total <= $per_page) {
+        $message = sprintf(_n('Showing the single result', 'Showing all %d results', $total, 'woocommerce'), $total);
+        return '<p class="woocommerce-result-count" role="status">' . esc_html($message) . '</p>';
+    }
+
+    $first = (($page - 1) * $per_page) + 1;
+    $last = min($total, $page * $per_page);
+
+    $message = sprintf(_n('Showing %1$d–%2$d of %3$d result', 'Showing %1$d–%2$d of %3$d results', $total, 'woocommerce'), $first, $last, $total);
+    return '<p class="woocommerce-result-count" role="status">' . esc_html($message) . '</p>';
+}
+
+function aventis_get_product_archive_pagination($current_page, $total_pages, $base_url = '')
+{
+    $current_page = max(1, absint($current_page));
+    $total_pages = absint($total_pages);
+
+    if ($total_pages < 2) {
+        return '';
+    }
+
+    $base_url = $base_url ?: get_post_type_archive_link('product');
+    $page_numbers = array(1, $total_pages);
+
+    for ($page = max(1, $current_page - 1); $page <= min($total_pages, $current_page + 1); $page++) {
+        $page_numbers[] = $page;
+    }
+
+    $page_numbers = array_values(array_unique(array_map('absint', $page_numbers)));
+    sort($page_numbers);
+
+    ob_start();
+    ?>
+    <nav class="linkpva-pagination" aria-label="<?php echo esc_attr__('Product pagination', 'linkpva'); ?>" data-product-pagination>
+        <?php if ($current_page > 1) : ?>
+            <a href="<?php echo esc_url(add_query_arg('product-page', $current_page - 1, $base_url)); ?>" data-page="<?php echo esc_attr($current_page - 1); ?>" aria-label="<?php echo esc_attr__('Previous page', 'linkpva'); ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i></a>
+        <?php endif; ?>
+        <?php $previous_page = 0; ?>
+        <?php foreach ($page_numbers as $page_number) : ?>
+            <?php if ($previous_page && $page_number > $previous_page + 1) : ?><span class="dots" aria-hidden="true">&hellip;</span><?php endif; ?>
+            <?php if ($page_number === $current_page) : ?>
+                <span aria-current="page"><?php echo esc_html($page_number); ?></span>
+            <?php else : ?>
+                <a href="<?php echo esc_url(add_query_arg('product-page', $page_number, $base_url)); ?>" data-page="<?php echo esc_attr($page_number); ?>"><?php echo esc_html($page_number); ?></a>
+            <?php endif; ?>
+            <?php $previous_page = $page_number; ?>
+        <?php endforeach; ?>
+        <?php if ($current_page < $total_pages) : ?>
+            <a href="<?php echo esc_url(add_query_arg('product-page', $current_page + 1, $base_url)); ?>" data-page="<?php echo esc_attr($current_page + 1); ?>" aria-label="<?php echo esc_attr__('Next page', 'linkpva'); ?>"><i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <?php endif; ?>
+    </nav>
+    <?php
+
+    return ob_get_clean();
+}
+
 function aventis_product_archive_ajax()
 {
     if (!class_exists('WooCommerce')) {
@@ -116,6 +283,13 @@ function aventis_product_archive_ajax()
     $save_recent = !empty($_POST['save_recent']) && 'yes' === sanitize_text_field(wp_unslash($_POST['save_recent']));
     $recent_only = !empty($_POST['recent_only']) && 'yes' === sanitize_text_field(wp_unslash($_POST['recent_only']));
     $context = array();
+    $filters = array(
+        'product_category' => isset($_POST['product_category']) ? aventis_sanitize_product_archive_values(wp_unslash($_POST['product_category'])) : array(),
+        'account_type' => isset($_POST['account_type']) ? aventis_sanitize_product_archive_values(wp_unslash($_POST['account_type'])) : array(),
+        'account_age'  => isset($_POST['account_age']) ? aventis_sanitize_product_archive_values(wp_unslash($_POST['account_age'])) : array(),
+        'stock_status' => isset($_POST['stock_status']) ? aventis_sanitize_product_archive_values(wp_unslash($_POST['stock_status'])) : array(),
+    );
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field(wp_unslash($_POST['orderby'])) : '';
 
     if (!empty($_POST['context'])) {
         $decoded_context = json_decode(wp_unslash($_POST['context']), true);
@@ -135,10 +309,14 @@ function aventis_product_archive_ajax()
         ));
     }
 
-    $products = new WP_Query(aventis_build_product_archive_ajax_args($page, $search, $context));
+    $products = new WP_Query(aventis_build_product_archive_ajax_args($page, $search, $context, $filters, $orderby));
+    WC()->query->remove_ordering_args();
+    $posts_per_page = aventis_get_product_archive_posts_per_page();
 
     wp_send_json_success(array(
         'html'        => aventis_render_product_archive_results($products),
+        'count_html'  => aventis_get_product_archive_result_count($products->found_posts, $page, $posts_per_page),
+        'pagination'  => aventis_get_product_archive_pagination($page, $products->max_num_pages),
         'page'        => $page,
         'max_pages'   => absint($products->max_num_pages),
         'found_posts' => absint($products->found_posts),
@@ -157,10 +335,20 @@ function aventis_enqueue_product_archive_ajax_assets()
     wp_enqueue_script(
         'linkpva-woocommerce-archive',
         EGNS_ASSETS_JS_ROOT . '/woocommerce-archive.js',
-        array('jquery', 'custom-main'),
+        array('jquery'),
         filemtime(EGNS_ASSETS_JS_ROOT_DIR . '/woocommerce-archive.js'),
         true
     );
+
+    wp_localize_script('linkpva-woocommerce-archive', 'linkpvaProductArchive', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('ajax-nonce'),
+        'strings' => array(
+            'loading' => esc_html__('Loading products.', 'linkpva'),
+            'updated' => esc_html__('Products updated.', 'linkpva'),
+            'error'   => esc_html__('Products could not be loaded. Please try again.', 'linkpva'),
+        ),
+    ));
 }
 add_action('wp_enqueue_scripts', 'aventis_enqueue_product_archive_ajax_assets', 30);
 

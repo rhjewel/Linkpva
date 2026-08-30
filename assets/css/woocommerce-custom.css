@@ -80,8 +80,35 @@ a.added_to_cart.wc-forward:hover {
 }
 
 /* load more css  */
-.linkpva-woocommerce-archive.is-loading {
+.linkpva-woocommerce-archive [data-product-grid],
+.linkpva-woocommerce-archive [data-product-result-count],
+.linkpva-woocommerce-archive [data-product-pagination-wrap] {
+  transition: opacity 0.2s ease;
+}
+
+.linkpva-woocommerce-archive.is-loading [data-product-grid],
+.linkpva-woocommerce-archive.is-loading [data-product-result-count],
+.linkpva-woocommerce-archive.is-loading [data-product-pagination-wrap] {
+  opacity: 0.5;
   pointer-events: none;
+}
+
+.linkpva-woocommerce-archive.is-loading [data-product-grid] {
+  opacity: 1;
+}
+
+.linkpva-woocommerce-archive .linkpva-shop-toolbar .woocommerce-result-count,
+.linkpva-woocommerce-archive .linkpva-shop-toolbar .woocommerce-ordering {
+  float: none;
+  margin: 0;
+}
+
+.linkpva-woocommerce-archive .linkpva-shop-toolbar [data-product-result-count] p {
+  margin: 0;
+}
+
+.linkpva-woocommerce-archive .linkpva-filter-card > .linkpva-button {
+  margin-top: 20px;
 }
 
 .linkpva-product-load-more.disabled {
@@ -130,6 +157,58 @@ a.added_to_cart.wc-forward:hover {
   margin: -64px auto 24px;
   position: relative;
   z-index: 1;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-img {
+  height: 195px;
+  margin: 0;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-line {
+  border-radius: 5px;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-category {
+  width: 34%;
+  height: 10px;
+  margin-bottom: 11px;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-title {
+  width: 82%;
+  height: 18px;
+  margin-bottom: 18px;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-feature {
+  width: 74%;
+  height: 12px;
+  margin: 9px 0 0;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-feature.is-short {
+  width: 58%;
+  margin-bottom: 20px;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .linkpva-product-footer {
+  border-top: 1px solid var(--color-border);
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-price {
+  width: 34%;
+  height: 20px;
+}
+
+.linkpva-woocommerce-archive .linkpva-product-skeleton-card .skeleton-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
 }
 
 .linkpva-product-no-results {
