@@ -448,6 +448,7 @@
 }
 
 .woocommerce div.product .linkpva-product-summary .linkpva-purchase-row {
+  margin-top: 25px;
   align-items: stretch;
 }
 
@@ -910,6 +911,7 @@ table.wc-block-cart-items .wc-block-cart-item__image {
 }
 
 .woocommerce-account .woocommerce-MyAccount-navigation li+li {
+  margin-top: 0;
   border-top: 1px solid var(--color-border);
 }
 

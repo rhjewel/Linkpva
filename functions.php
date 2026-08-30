@@ -163,3 +163,10 @@ if (! function_exists('linkpva_enqueue_fa6')) {
 	}
 	add_action('wp_enqueue_scripts', 'linkpva_enqueue_fa6');
 }
+
+/**
+ * successful add-to-cart- too redirect checkout page
+ */
+add_filter( 'woocommerce_add_to_cart_redirect', function( $url ) {
+    return wc_get_checkout_url();
+} );

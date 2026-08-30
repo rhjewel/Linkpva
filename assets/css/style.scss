@@ -106,8 +106,8 @@ svg {
 }
 
 :focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.38);
-    outline-offset: 3px;
+    outline: 0px solid rgba(37, 99, 235, 0.38);
+    outline-offset: 0px;
 }
 
 ::selection {
@@ -3487,6 +3487,10 @@ svg {
     border-bottom: 1px solid var(--color-border);
     text-align: left;
     vertical-align: middle;
+}
+
+.linkpva-pricing-table td {
+    padding: 14px 24px;
 }
 
 .linkpva-pricing-table thead th {
