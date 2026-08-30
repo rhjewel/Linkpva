@@ -23,7 +23,7 @@ $total_count  = $people_query->found_posts;
             if (have_posts()) :
                 while (have_posts()) :
                     the_post();
-                    aventis_render_people_archive_card();
+                    linkpva_render_people_archive_card();
                 endwhile;
             endif;
             ?>

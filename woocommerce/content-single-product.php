@@ -41,12 +41,15 @@ $stock_options = function_exists('wc_get_product_stock_status_options') ? wc_get
 $stock_label = $stock_options[$stock_status] ?? ucfirst(str_replace('_', ' ', $stock_status));
 $stock_icon = 'outofstock' === $stock_status ? 'bi bi-x-circle-fill' : ('onbackorder' === $stock_status ? 'bi bi-clock-fill' : 'bi bi-check-circle-fill');
 $product_meta = get_post_meta($product_id, 'EGNS_PRODUCT_META_ID', true);
-$specifications = is_array($product_meta) ? ($product_meta['product_specifications'] ?? array()) : array();
-$specifications = array_values(array_filter((array) $specifications, function ($specification) {
+$product_specifications = is_array($product_meta) ? ($product_meta['product_specifications'] ?? array()) : array();
+$product_specifications = array_values(array_filter((array) $product_specifications, function ($specification) {
 	return is_array($specification) && '' !== trim((string) ($specification['specification_label'] ?? '')) && '' !== trim((string) ($specification['specification_value'] ?? ''));
 }));
+$attribute_specifications = array();
 
-if (!$specifications) {
+// Product Specifications have priority. Use visible product attributes only
+// when the Codestar repeater has no complete label/value rows.
+if (!$product_specifications) {
 	foreach ($product->get_attributes() as $attribute) {
 		if (!$attribute->get_visible()) {
 			continue;
@@ -57,16 +60,24 @@ if (!$specifications) {
 			? wc_get_product_terms($product_id, $attribute_name, array('fields' => 'names'))
 			: $attribute->get_options();
 
-		if (is_wp_error($attribute_values) || !$attribute_values) {
+		if (is_wp_error($attribute_values)) {
 			continue;
 		}
 
-		$specifications[] = array(
+		$attribute_values = array_values(array_filter(array_map('sanitize_text_field', (array) $attribute_values), 'strlen'));
+
+		if (!$attribute_values) {
+			continue;
+		}
+
+		$attribute_specifications[] = array(
 			'specification_label' => wc_attribute_label($attribute_name, $product),
-			'specification_value' => implode(', ', array_map('sanitize_text_field', $attribute_values)),
+			'specification_value' => implode(', ', $attribute_values),
 		);
 	}
 }
+
+$specifications = $product_specifications ?: $attribute_specifications;
 ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class('', $product); ?>>
 

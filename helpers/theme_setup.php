@@ -45,7 +45,7 @@ if (!class_exists('Egns_Theme_Setup')) {
          */
         public function egns_set_content_width()
         {
-            $GLOBALS['content_width'] = apply_filters('aventis_content_width', 1140);
+            $GLOBALS['content_width'] = apply_filters('linkpva_content_width', 1140);
         }
 
         /**

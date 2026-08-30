@@ -9,19 +9,19 @@ if (class_exists('WooCommerce')) {
      * WooCommerce before, after wrapper div change
      * 
      * */
-    function aventis_wrapper_start()
+    function linkpva_wrapper_start()
     {
         echo '<div class="shop-page-wrapper">
     <div class="container">';
     }
 
-    function aventis_wrapper_end()
+    function linkpva_wrapper_end()
     {
         echo '</div>
 	</div>';
     }
-    add_action('woocommerce_before_main_content', 'aventis_wrapper_start', 10);
-    add_action('woocommerce_after_main_content', 'aventis_wrapper_end', 10);
+    add_action('woocommerce_before_main_content', 'linkpva_wrapper_start', 10);
+    add_action('woocommerce_after_main_content', 'linkpva_wrapper_end', 10);
 
     /**
      * remove default woocommerce sidebar
@@ -52,25 +52,25 @@ if (class_exists('WooCommerce')) {
     /**
      * Show quantity minus button
      */
-    function aventis_display_quantity_minus()
+    function linkpva_display_quantity_minus()
     {
         echo '<button type="button" class="minus" aria-label="' . esc_attr__('Decrease quantity', 'linkpva') . '"><i class="bi bi-dash"></i></button>';
     }
-    add_action('woocommerce_before_quantity_input_field', 'aventis_display_quantity_minus');
+    add_action('woocommerce_before_quantity_input_field', 'linkpva_display_quantity_minus');
 
     /**
      * Show quantity plus button
      */
-    function aventis_display_quantity_plus()
+    function linkpva_display_quantity_plus()
     {
         echo '<button type="button" class="plus" aria-label="' . esc_attr__('Increase quantity', 'linkpva') . '"><i class="bi bi-plus"></i></button>';
     }
-    add_action('woocommerce_after_quantity_input_field', 'aventis_display_quantity_plus');
+    add_action('woocommerce_after_quantity_input_field', 'linkpva_display_quantity_plus');
 
     /**
      * Set default quantity only for single product page if empty
      */
-    function aventis_set_default_quantity($args, $product)
+    function linkpva_set_default_quantity($args, $product)
     {
         if (is_product() && empty($args['input_value'])) {
             $args['input_value'] = max(1, isset($args['min_value']) ? (float) $args['min_value'] : 1);
@@ -78,12 +78,12 @@ if (class_exists('WooCommerce')) {
 
         return $args;
     }
-    add_filter('woocommerce_quantity_input_args', 'aventis_set_default_quantity', 10, 2);
+    add_filter('woocommerce_quantity_input_args', 'linkpva_set_default_quantity', 10, 2);
 
     /**
      * Quantity plus/minus script
      */
-    function aventis_add_cart_quantity_plus_minus()
+    function linkpva_add_cart_quantity_plus_minus()
     {
         if (!is_product() && !is_cart()) {
             return;
@@ -126,12 +126,12 @@ if (class_exists('WooCommerce')) {
         });
     ");
     }
-    add_action('wp_footer', 'aventis_add_cart_quantity_plus_minus');
+    add_action('wp_footer', 'linkpva_add_cart_quantity_plus_minus');
 
     /**
      * Remove default WooCommerce archive item parts
      */
-    function egns_aventis_remove_woocommerce_hooks()
+    function egns_linkpva_remove_woocommerce_hooks()
     {
         if (!class_exists('WooCommerce')) {
             return;
@@ -143,13 +143,13 @@ if (class_exists('WooCommerce')) {
             remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
         }
     }
-    add_action('wp', 'egns_aventis_remove_woocommerce_hooks');
+    add_action('wp', 'egns_linkpva_remove_woocommerce_hooks');
 
 
     /**
      * Get the Account Type product attribute value.
      */
-    function egns_aventis_get_product_account_type($product)
+    function egns_linkpva_get_product_account_type($product)
     {
         if (!$product || !is_a($product, 'WC_Product')) {
             return '';
@@ -180,7 +180,7 @@ if (class_exists('WooCommerce')) {
     /**
      * Get newline-separated Product Features from the Codestar product meta.
      */
-    function egns_aventis_get_product_features($product_id, $limit = 3)
+    function egns_linkpva_get_product_features($product_id, $limit = 3)
     {
         $product_meta = get_post_meta($product_id, 'EGNS_PRODUCT_META_ID', true);
         $features = is_array($product_meta) ? ($product_meta['product_feature_lbl'] ?? '') : '';
@@ -198,7 +198,7 @@ if (class_exists('WooCommerce')) {
     /**
      * Render the shared archive/related product card.
      */
-    function egns_aventis_render_product_card($product, $column_class, $visual_index = 0, $feature_limit = 3)
+    function egns_linkpva_render_product_card($product, $column_class, $visual_index = 0, $feature_limit = 3)
     {
         if (!$product || !is_a($product, 'WC_Product') || !$product->is_visible()) {
             return;
@@ -207,8 +207,8 @@ if (class_exists('WooCommerce')) {
         $product_id = $product->get_id();
         $product_title = $product->get_name();
         $product_permalink = $product->get_permalink();
-        $account_type = egns_aventis_get_product_account_type($product);
-        $features = egns_aventis_get_product_features($product_id, $feature_limit);
+        $account_type = egns_linkpva_get_product_account_type($product);
+        $features = egns_linkpva_get_product_features($product_id, $feature_limit);
         $categories = get_the_terms($product_id, 'product_cat');
         $category_name = (!is_wp_error($categories) && !empty($categories)) ? $categories[0]->name : '';
         $visual_classes = array('', 'is-purple', 'is-cyan', 'is-green');
@@ -257,7 +257,7 @@ if (class_exists('WooCommerce')) {
     /**
      * Archive page product card.
      */
-    function egns_aventis_shop_product_card()
+    function egns_linkpva_shop_product_card()
     {
         global $product;
 
@@ -266,10 +266,10 @@ if (class_exists('WooCommerce')) {
         }
 
         static $card_index = 0;
-        egns_aventis_render_product_card($product, 'col-md-6 col-xl-4', $card_index, 3);
+        egns_linkpva_render_product_card($product, 'col-md-6 col-xl-4', $card_index, 3);
         $card_index++;
     }
-    add_action('egns_aventis_shop_page_product_card', 'egns_aventis_shop_product_card');
+    add_action('egns_linkpva_shop_page_product_card', 'egns_linkpva_shop_product_card');
 
     /**
      * Add custom WooCommerce related product cards.
@@ -306,22 +306,20 @@ if (class_exists('WooCommerce')) {
         $shop_url = wc_get_page_permalink('shop');
         $heading_id = 'linkpva-related-products-heading-' . $current_product_id;
     ?>
-        <section class="linkpva-products" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
-            <div class="container">
-                <div class="linkpva-heading-row">
-                    <div class="linkpva-section-heading">
-                        <span class="linkpva-section-tag"><?php esc_html_e('You May Also Like', 'linkpva'); ?></span>
-                        <h2 id="<?php echo esc_attr($heading_id); ?>"><?php esc_html_e('Related Products', 'linkpva'); ?></h2>
-                    </div>
-                    <?php if ($shop_url) : ?>
-                        <a class="linkpva-text-link" href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('View all products', 'linkpva'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-                    <?php endif; ?>
+        <section class="linkpva-related-products linkpva-sec-mt" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
+            <div class="linkpva-heading-row">
+                <div class="linkpva-section-heading">
+                    <span class="linkpva-section-tag"><?php esc_html_e('You May Also Like', 'linkpva'); ?></span>
+                    <h2 id="<?php echo esc_attr($heading_id); ?>"><?php esc_html_e('Related Products', 'linkpva'); ?></h2>
                 </div>
-                <div class="row g-4">
-                    <?php foreach ($related_products as $index => $related_product) : ?>
-                        <?php egns_aventis_render_product_card($related_product, 'col-md-6 col-lg-4', $index + 1, 2); ?>
-                    <?php endforeach; ?>
-                </div>
+                <?php if ($shop_url) : ?>
+                    <a class="linkpva-text-link" href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('View all products', 'linkpva'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <?php endif; ?>
+            </div>
+            <div class="row g-4">
+                <?php foreach ($related_products as $index => $related_product) : ?>
+                    <?php egns_linkpva_render_product_card($related_product, 'col-md-6 col-lg-4', $index + 1, 2); ?>
+                <?php endforeach; ?>
             </div>
         </section>
     <?php
@@ -342,7 +340,7 @@ if (class_exists('WooCommerce')) {
     /**
      * Product not found message
      */
-    function egns_aventis_shop_no_products()
+    function egns_linkpva_shop_no_products()
     {
     ?>
         <div class="col-12">
@@ -351,9 +349,9 @@ if (class_exists('WooCommerce')) {
                 <span class="no-results-description"><?php echo esc_html__('Nothing Match your search terms. Please try again with some different keywords.', 'linkpva'); ?></span>
             </div>
         </div>
-    <?php
+<?php
     }
-    add_action('egns_aventis_shop_page_no_products', 'egns_aventis_shop_no_products');
+    add_action('egns_linkpva_shop_page_no_products', 'egns_linkpva_shop_no_products');
 
 
 
@@ -367,14 +365,14 @@ if (class_exists('WooCommerce')) {
     /**
      * Wrap WooCommerce tabs with custom parent div
      */
-    function aventis_custom_product_tabs_wrapper()
+    function linkpva_custom_product_tabs_wrapper()
     {
         echo '<div class="product-description-and-review-area">';
         woocommerce_output_product_data_tabs();
         echo '</div>';
     }
 
-    function aventis_wrap_woocommerce_tabs()
+    function linkpva_wrap_woocommerce_tabs()
     {
         if (!is_product()) {
             return;
@@ -383,9 +381,9 @@ if (class_exists('WooCommerce')) {
         // Remove default tabs output
         remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
         // Add custom wrapped tabs
-        add_action('woocommerce_after_single_product_summary', 'aventis_custom_product_tabs_wrapper', 10);
+        add_action('woocommerce_after_single_product_summary', 'linkpva_custom_product_tabs_wrapper', 10);
     }
-    add_action('wp', 'aventis_wrap_woocommerce_tabs');
+    add_action('wp', 'linkpva_wrap_woocommerce_tabs');
 
     /**
      * Rename description tab title and remove description tab title
@@ -414,8 +412,8 @@ if (class_exists('WooCommerce')) {
      * */
     add_filter('woocommerce_get_image_size_gallery_thumbnail', function ($size) {
         return array(
-            'width'  => 200,
-            'height' => 200,
+            'width'  => 300,
+            'height' => 300,
             'crop'   => 0,
         );
     });

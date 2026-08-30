@@ -39,7 +39,7 @@ if (!function_exists('egns_comment_callback')) {
 }
 
 
-function aventis_comment_open_div_state($set = null)
+function linkpva_comment_open_div_state($set = null)
 {
     static $comment_open_div = 0;
 
@@ -55,7 +55,7 @@ function aventis_comment_open_div_state($set = null)
  */
 function _lp_before_comment_fields()
 {
-    aventis_comment_open_div_state(1);
+    linkpva_comment_open_div_state(1);
     echo '<div class="row g-4">';
 }
 /**
@@ -64,11 +64,11 @@ function _lp_before_comment_fields()
  */
 function _lp_after_comment_fields()
 {
-    if (0 === aventis_comment_open_div_state()) {
+    if (0 === linkpva_comment_open_div_state()) {
         return;
     }
 
-    aventis_comment_open_div_state(0);
+    linkpva_comment_open_div_state(0);
     echo '</div>';
 }
 function wpb_move_comment_field_to_bottom($fields)

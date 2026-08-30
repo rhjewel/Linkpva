@@ -231,7 +231,7 @@ if (!class_exists('Egns_Helper')) {
 
 					if ($page_option == 1) {
 						return true;
-					} elseif (is_singular('product') || is_singular('case-study') || is_singular('people') || is_singular('career') ||  is_singular('post') || is_single('post') || self::aventis_is_blog_pages() || is_404()) {
+					} elseif (is_singular('product') || is_singular('case-study') || is_singular('people') || is_singular('career') ||  is_singular('post') || is_single('post') || self::linkpva_is_blog_pages() || is_404()) {
 						return true;
 					} elseif ($theme_option == 1 && empty($page_option) && $page_option != 0) {
 						return true;
@@ -517,7 +517,7 @@ if (!class_exists('Egns_Helper')) {
 		 *
 		 * @since   1.2.0
 		 */
-		public static function aventis_is_blog_pages()
+		public static function linkpva_is_blog_pages()
 		{
 			return ((((is_search()) || is_archive()) ||  (is_author()) || (is_category()) || (is_home())  || (is_tag()))) ? true : false;
 		}
@@ -1421,7 +1421,7 @@ if (!class_exists('Egns_Helper')) {
 		 */
 		public static function is_elementor()
 		{
-			if (self::aventis_is_blog_pages()) {
+			if (self::linkpva_is_blog_pages()) {
 				return false;
 			}
 

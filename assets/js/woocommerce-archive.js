@@ -122,7 +122,7 @@
 				type: 'POST',
 				dataType: 'json',
 				data: {
-					action: 'aventis_product_archive_ajax',
+					action: 'linkpva_product_archive_ajax',
 					nonce: linkpvaProductArchive.nonce,
 					page: state.page,
 					search: $archive.attr('data-search') || '',

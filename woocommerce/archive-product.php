@@ -35,8 +35,8 @@ do_action('woocommerce_before_main_content');
 
 global $wp_query;
 
-$account_type_taxonomy = function_exists('aventis_get_product_attribute_taxonomy') ? aventis_get_product_attribute_taxonomy('Account Type') : '';
-$account_age_taxonomy = function_exists('aventis_get_product_attribute_taxonomy') ? aventis_get_product_attribute_taxonomy('Account Age') : '';
+$account_type_taxonomy = function_exists('linkpva_get_product_attribute_taxonomy') ? linkpva_get_product_attribute_taxonomy('Account Type') : '';
+$account_age_taxonomy = function_exists('linkpva_get_product_attribute_taxonomy') ? linkpva_get_product_attribute_taxonomy('Account Age') : '';
 $account_type_terms = $account_type_taxonomy ? get_terms(array('taxonomy' => $account_type_taxonomy, 'hide_empty' => true, 'orderby' => 'name')) : array();
 $account_age_terms = $account_age_taxonomy ? get_terms(array('taxonomy' => $account_age_taxonomy, 'hide_empty' => true, 'orderby' => 'name')) : array();
 $account_type_terms = is_wp_error($account_type_terms) ? array() : $account_type_terms;
@@ -44,12 +44,12 @@ $account_age_terms = is_wp_error($account_age_terms) ? array() : $account_age_te
 $product_categories = get_terms(array('taxonomy' => 'product_cat', 'hide_empty' => true, 'orderby' => 'name'));
 $product_categories = is_wp_error($product_categories) ? array() : $product_categories;
 $stock_options = function_exists('wc_get_product_stock_status_options') ? wc_get_product_stock_status_options() : array();
-$selected_product_categories = isset($_GET['product_category']) ? aventis_sanitize_product_archive_values(wp_unslash($_GET['product_category'])) : array();
-$selected_account_types = isset($_GET['account_type']) ? aventis_sanitize_product_archive_values(wp_unslash($_GET['account_type'])) : array();
-$selected_account_ages = isset($_GET['account_age']) ? aventis_sanitize_product_archive_values(wp_unslash($_GET['account_age'])) : array();
-$selected_stock_statuses = isset($_GET['stock_status']) ? aventis_sanitize_product_archive_values(wp_unslash($_GET['stock_status'])) : array();
+$selected_product_categories = isset($_GET['product_category']) ? linkpva_sanitize_product_archive_values(wp_unslash($_GET['product_category'])) : array();
+$selected_account_types = isset($_GET['account_type']) ? linkpva_sanitize_product_archive_values(wp_unslash($_GET['account_type'])) : array();
+$selected_account_ages = isset($_GET['account_age']) ? linkpva_sanitize_product_archive_values(wp_unslash($_GET['account_age'])) : array();
+$selected_stock_statuses = isset($_GET['stock_status']) ? linkpva_sanitize_product_archive_values(wp_unslash($_GET['stock_status'])) : array();
 $current_page = max(1, absint(get_query_var('paged')), absint(get_query_var('product-page')));
-$posts_per_page = function_exists('aventis_get_product_archive_posts_per_page') ? aventis_get_product_archive_posts_per_page() : max(1, absint(get_option('posts_per_page')));
+$posts_per_page = function_exists('linkpva_get_product_archive_posts_per_page') ? linkpva_get_product_archive_posts_per_page() : max(1, absint(get_option('posts_per_page')));
 $archive_url = get_post_type_archive_link('product');
 $archive_context = array();
 
@@ -117,21 +117,21 @@ if (is_product_taxonomy()) {
 			</aside>
 			<div class="col-lg-9">
 				<div class="linkpva-shop-toolbar">
-					<div data-product-result-count><?php echo wp_kses_post(aventis_get_product_archive_result_count($wp_query->found_posts, $current_page, $posts_per_page)); ?></div>
+					<div data-product-result-count><?php echo wp_kses_post(linkpva_get_product_archive_result_count($wp_query->found_posts, $current_page, $posts_per_page)); ?></div>
 					<?php woocommerce_catalog_ordering(); ?>
 				</div>
 				<div class="row g-4" data-product-grid>
 					<?php if (woocommerce_product_loop()) : ?>
 						<?php while (have_posts()) : the_post(); ?>
 							<?php global $product; ?>
-							<?php do_action('egns_aventis_shop_page_product_card'); ?>
+							<?php do_action('egns_linkpva_shop_page_product_card'); ?>
 						<?php endwhile; ?>
 					<?php else : ?>
-						<?php do_action('egns_aventis_shop_page_no_products'); ?>
+						<?php do_action('egns_linkpva_shop_page_no_products'); ?>
 					<?php endif; ?>
 				</div>
 				<div data-product-pagination-wrap>
-					<?php echo aventis_get_product_archive_pagination($current_page, $wp_query->max_num_pages, $archive_url); ?>
+					<?php echo linkpva_get_product_archive_pagination($current_page, $wp_query->max_num_pages, $archive_url); ?>
 				</div>
 				<div class="screen-reader-text" aria-live="polite" aria-atomic="true" data-product-status></div>
 			</div>

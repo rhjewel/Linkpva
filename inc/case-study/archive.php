@@ -20,8 +20,8 @@ $terms = get_terms(array(
 $queried_object = get_queried_object();
 $active_term_id = $queried_object instanceof WP_Term && 'case-study-category' === $queried_object->taxonomy ? absint($queried_object->term_id) : 0;
 
-if (!function_exists('aventis_case_study_archive_metric')) {
-    function aventis_case_study_archive_metric($post_id)
+if (!function_exists('linkpva_case_study_archive_metric')) {
+    function linkpva_case_study_archive_metric($post_id)
     {
         $meta    = get_post_meta($post_id, 'EGNS_CASESTUDY_META_ID', true);
         $metrics = !empty($meta['case_study_metrics_list']) && is_array($meta['case_study_metrics_list']) ? $meta['case_study_metrics_list'] : array();
@@ -35,8 +35,8 @@ if (!function_exists('aventis_case_study_archive_metric')) {
     }
 }
 
-if (!function_exists('aventis_case_study_archive_arrow_icon')) {
-    function aventis_case_study_archive_arrow_icon()
+if (!function_exists('linkpva_case_study_archive_arrow_icon')) {
+    function linkpva_case_study_archive_arrow_icon()
     {
 ?>
         <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +95,7 @@ if (!function_exists('aventis_case_study_archive_arrow_icon')) {
                     $title     = get_the_title($post_id);
                     $image     = has_post_thumbnail($post_id) ? get_the_post_thumbnail_url($post_id, 'full') : includes_url('images/media/default.png');
                     $excerpt   = has_excerpt($post_id) ? get_the_excerpt($post_id) : wp_strip_all_tags(get_the_content(null, false, $post_id));
-                    $metric    = aventis_case_study_archive_metric($post_id);
+                    $metric    = linkpva_case_study_archive_metric($post_id);
                 ?>
                     <div class="col-lg-4 col-md-6 fade_anim" data-delay=".<?php echo esc_attr($delay); ?>">
                         <div class="case-study-card">
@@ -119,7 +119,7 @@ if (!function_exists('aventis_case_study_archive_arrow_icon')) {
                                 <?php endif; ?>
                                 <a href="<?php echo esc_url($permalink); ?>" class="primary-btn3">
                                     <span data-text="<?php echo esc_attr__('Read more', 'linkpva'); ?>"><?php echo esc_html__('Read more', 'linkpva'); ?></span>
-                                    <?php aventis_case_study_archive_arrow_icon(); ?>
+                                    <?php linkpva_case_study_archive_arrow_icon(); ?>
                                 </a>
                             </div>
                         </div>

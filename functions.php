@@ -66,7 +66,7 @@ add_filter('wpcf7_autop_or_not', '__return_false');
 /**
  * moves wp-comment-cookies-consent to the end right before the submit
  */
-function aventis_move_cookies($fields)
+function linkpva_move_cookies($fields)
 {
 	if (isset($fields['cookies'])) {
 		$cookies = $fields['cookies'];
@@ -75,12 +75,12 @@ function aventis_move_cookies($fields)
 	}
 	return $fields;
 }
-add_filter('comment_form_fields', 'aventis_move_cookies');
+add_filter('comment_form_fields', 'linkpva_move_cookies');
 
 /**
  * Output Custom CSS and JS in Frontend Get From Theme Option Panel
  */
-function aventis_enqueue_option_assets()
+function linkpva_enqueue_option_assets()
 {
 	$custom_css = Egns_Helper::egns_get_theme_option('custom_css');
 	if (!empty($custom_css)) {
@@ -93,12 +93,12 @@ function aventis_enqueue_option_assets()
 		wp_add_inline_script('custom-main', $custom_js);
 	}
 }
-add_action('wp_enqueue_scripts', 'aventis_enqueue_option_assets', 100);
+add_action('wp_enqueue_scripts', 'linkpva_enqueue_option_assets', 100);
 
 /**
  * Ensure WordPress never prints an empty <title> tag.
  */
-function aventis_fallback_document_title($title)
+function linkpva_fallback_document_title($title)
 {
 	$title = trim((string) $title);
 
@@ -114,7 +114,7 @@ function aventis_fallback_document_title($title)
 
 	return esc_html__('Linkpva', 'linkpva');
 }
-add_filter('pre_get_document_title', 'aventis_fallback_document_title', 999);
+add_filter('pre_get_document_title', 'linkpva_fallback_document_title', 999);
 
 
 
@@ -155,11 +155,11 @@ add_action('pre_get_posts', function ($query) {
 /**
  * Upgrade Font Awesome Free 6 with a front-end enqueue style
  **/
-if (! function_exists('aventis_enqueue_fa6')) {
-	function aventis_enqueue_fa6()
+if (! function_exists('linkpva_enqueue_fa6')) {
+	function linkpva_enqueue_fa6()
 	{
 		wp_enqueue_style('csf-fa6', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css', array(), '6.6.0', 'all');
 		wp_enqueue_style('csf-fa6-v4-shims', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/v4-shims.min.css', array(), '6.6.0', 'all');
 	}
-	add_action('wp_enqueue_scripts', 'aventis_enqueue_fa6');
+	add_action('wp_enqueue_scripts', 'linkpva_enqueue_fa6');
 }

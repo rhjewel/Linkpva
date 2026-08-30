@@ -39,7 +39,7 @@ if (!is_front_page()) {
 do_action('woocommerce_before_main_content');
 ?>
 
-<div class="linkpva-inner-section">
+<div class="linkpva-section">
 	<?php while (have_posts()) : ?>
 		<?php the_post(); ?>
 

@@ -4,7 +4,7 @@
  * Mega menu field hide from submenu
  * Show only parent menu
  */
-function aventis_enqueue_nav_menu_admin_script($hook)
+function linkpva_enqueue_nav_menu_admin_script($hook)
 {
     if ('nav-menus.php' !== $hook) {
         return;
@@ -35,7 +35,7 @@ JS;
 
     wp_add_inline_script('nav-menu', $script);
 }
-add_action('admin_enqueue_scripts', 'aventis_enqueue_nav_menu_admin_script');
+add_action('admin_enqueue_scripts', 'linkpva_enqueue_nav_menu_admin_script');
 
 /**
  *Mega menu nav walker
