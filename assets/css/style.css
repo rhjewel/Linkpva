@@ -105,6 +105,11 @@ svg {
   outline-offset: 3px;
 }
 
+::-moz-selection {
+  color: #fff;
+  background: var(--color-primary);
+}
+
 ::selection {
   color: #fff;
   background: var(--color-primary);
@@ -1010,7 +1015,8 @@ svg {
 .linkpva-product-visual > img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   transition: all 0.25s ease;
 }
 .linkpva-product-visual.is-purple {
@@ -1559,7 +1565,8 @@ svg {
 .linkpva-blog-visual > img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   transition: all 0.25s ease;
 }
 .linkpva-blog-visual > i {
@@ -1811,7 +1818,7 @@ svg {
 .linkpva-footer-bottom p {
   margin: 0;
   color: #8493ad;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .linkpva-back-to-top {
@@ -2477,7 +2484,7 @@ svg {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 .linkpva-form-field textarea {
-  min-height: 135px;
+  height: 135px;
   resize: vertical;
 }
 .linkpva-form-field small {
@@ -2617,7 +2624,8 @@ svg {
 .linkpva-product-main-visual > img {
   width: 100%;
   min-height: inherit;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .linkpva-product-thumbnails {
@@ -2639,7 +2647,8 @@ svg {
 .linkpva-product-thumbnails button img {
   width: 100%;
   height: 80px;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .linkpva-product-thumbnails button.is-active, .linkpva-product-thumbnails button:hover {
   border-color: var(--color-primary);
@@ -3357,7 +3366,8 @@ svg {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .linkpva-article-layout {
@@ -3698,4 +3708,4 @@ svg {
   .linkpva-article-content {
     font-size: 15px;
   }
-}
+}/*# sourceMappingURL=style.css.map */

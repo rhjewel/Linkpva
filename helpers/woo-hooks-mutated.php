@@ -186,44 +186,26 @@ if (class_exists('WooCommerce')) {
 ?>
 
 
-        <div class="col-lg-4 col-sm-6 fade_anim" data-delay=".2">
-            <div class="product-card">
-                <div class="product-card-img-wrap">
-                    <a href="<?php echo esc_url($product_permalink); ?>" class="product-card-img">
-                        <img src="<?php echo esc_url($product_image); ?>" alt="<?php echo esc_attr($product_title); ?>">
-                    </a>
-                    <a href="<?php echo esc_url($add_to_cart_url); ?>"
-                        class="custom-add-to-cart-btn cart-btn <?php echo esc_attr($button_classes); ?>" data-quantity="1" data-product_id="<?php echo esc_attr($product_id); ?>" data-product_sku="<?php echo esc_attr($product_sku); ?>" aria-label="<?php echo esc_attr($add_to_cart_text); ?>" rel="nofollow">
-                        <?php echo esc_html($add_to_cart_text); ?>
-                    </a>
+        <div class="col-md-6 col-xl-4">
+            <article class="linkpva-product-card">
+                <div class="linkpva-product-visual"><span
+                        class="linkpva-product-badge">Verified</span><img
+                        src="assets/images/products/product-verified.webp" width="1200" height="750"
+                        alt="Verified professional account preview" loading="lazy" decoding="async">
                 </div>
-                <div class="product-card-content">
-                    <?php if (wc_review_ratings_enabled()) : ?>
-                        <ul class="rating">
-                            <?php
-                            $rounded_rating = round($average_rating);
-                            for ($i = 1; $i <= 5; $i++) :
-                                if ($i <= $rounded_rating) :
-                            ?>
-                                    <li>&#9733;</li>
-                                <?php
-                                else :
-                                ?>
-                                    <li>&#9734;</li>
-                            <?php
-                                endif;
-                            endfor;
-                            ?>
-                        </ul>
-                    <?php endif; ?>
-                    <h3>
-                        <a href="<?php echo esc_url($product_permalink); ?>">
-                            <?php echo esc_html($product_title); ?>
-                        </a>
-                    </h3>
-                    <span><?php echo wp_kses_post($product_price); ?></span>
+                <div class="linkpva-product-body"><span class="linkpva-product-category">Verified
+                        Account</span>
+                    <h3><a href="product-details.html">Verified LinkedIn Account</a></h3>
+                    <ul>
+                        <li><i class="bi bi-check2"></i> Verification details</li>
+                        <li><i class="bi bi-check2"></i> Completed profile</li>
+                        <li><i class="bi bi-check2"></i> Delivery information</li>
+                    </ul>
+                    <div class="linkpva-product-footer"><strong>$49.00</strong><a
+                            href="product-details.html" aria-label="View product"><i
+                                class="bi bi-arrow-right"></i></a></div>
                 </div>
-            </div>
+            </article>
         </div>
 
     <?php
@@ -235,7 +217,7 @@ if (class_exists('WooCommerce')) {
     /**
      * Add Custom WooCommerce Related Product card
      */
-    function egns_woocommerce_related_products($current_product_id, $limit = 8)
+    function egns_woocommerce_related_products($current_product_id, $limit = 3)
     {
         if (!$current_product_id || !class_exists('WooCommerce')) {
             return;
@@ -291,112 +273,73 @@ if (class_exists('WooCommerce')) {
             return;
         }
     ?>
-        <div class="related-product-section mt-100">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title">
-                        <h3><?php echo esc_html__('Related Product', 'linkpva'); ?></h3>
-                    </div>
+        <section class="linkpva-section linkpva-products">
+            <div class="container">
+                <div class="linkpva-heading-row">
+                    <div class="linkpva-section-heading"><span class="linkpva-section-tag">You May Also Like</span>
+                        <h2>Related Products</h2>
+                    </div><a class="linkpva-text-link" href="shop.html">View all products <i
+                            class="bi bi-arrow-right"></i></a>
                 </div>
-            </div>
-            <div class="related-product-slider-area">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="swiper related-product-slider">
-                            <div class="swiper-wrapper">
-                                <?php while ($related_products->have_posts()) : $related_products->the_post(); ?>
-                                    <?php
-                                    $product = wc_get_product(get_the_ID());
-
-                                    if (!$product || !is_a($product, 'WC_Product')) {
-                                        continue;
-                                    }
-
-                                    $product_id        = $product->get_id();
-                                    $product_title     = $product->get_name();
-                                    $product_permalink = get_permalink($product_id);
-                                    $product_price     = $product->get_price_html();
-                                    $product_image     = get_the_post_thumbnail_url($product_id, 'full');
-                                    $product_image     = $product_image ? $product_image : wc_placeholder_img_src();
-                                    $rating_count      = $product->get_rating_count();
-                                    $average_rating    = $product->get_average_rating();
-                                    $review_count      = $product->get_review_count();
-
-                                    $add_to_cart_url   = $product->add_to_cart_url();
-                                    $add_to_cart_text  = $product->add_to_cart_text();
-                                    $product_type      = $product->get_type();
-                                    $product_sku       = $product->get_sku();
-
-                                    $button_classes = implode(' ', array_filter(array(
-                                        'cart',
-                                        'button',
-                                        'product_type_' . $product->get_type(),
-                                        $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
-                                        ($product->supports('ajax_add_to_cart') && $product->get_type() === 'simple') ? 'ajax_add_to_cart' : '',
-                                    )));
-                                    ?>
-                                    <div class="swiper-slide">
-                                        <div class="product-card">
-                                            <div class="product-card-img-wrap">
-                                                <a href="<?php echo esc_url($product_permalink); ?>" class="product-card-img">
-                                                    <img src="<?php echo esc_url($product_image); ?>" alt="<?php echo esc_attr($product_title); ?>">
-                                                </a>
-                                                <a href="<?php echo esc_url($add_to_cart_url); ?>"
-                                                    class="custom-add-to-cart-btn cart-btn <?php echo esc_attr($button_classes); ?>" data-quantity="1" data-product_id="<?php echo esc_attr($product_id); ?>" data-product_sku="<?php echo esc_attr($product_sku); ?>" aria-label="<?php echo esc_attr($add_to_cart_text); ?>" rel="nofollow">
-                                                    <?php echo esc_html($add_to_cart_text); ?>
-                                                </a>
-                                            </div>
-                                            <div class="product-card-content">
-                                                <?php if (wc_review_ratings_enabled()) : ?>
-                                                    <ul class="rating">
-                                                        <?php
-                                                        $rounded_rating = round($average_rating);
-                                                        for ($i = 1; $i <= 5; $i++) :
-                                                            if ($i <= $rounded_rating) :
-                                                        ?>
-                                                                <li>&#9733;</li>
-                                                            <?php
-                                                            else :
-                                                            ?>
-                                                                <li>&#9734;</li>
-                                                        <?php
-                                                            endif;
-                                                        endfor;
-                                                        ?>
-                                                    </ul>
-                                                <?php endif; ?>
-                                                <h3>
-                                                    <a href="<?php echo esc_url($product_permalink); ?>">
-                                                        <?php echo esc_html($product_title); ?>
-                                                    </a>
-                                                </h3>
-                                                <span><?php echo wp_kses_post($product_price); ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endwhile; ?>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <article class="linkpva-product-card">
+                            <div class="linkpva-product-visual is-purple"><span
+                                    class="linkpva-product-badge">Aged</span><img
+                                    src="assets/images/products/product-aged-5y.webp" width="1200" height="750"
+                                    alt="Established aged account preview" loading="lazy" decoding="async"></div>
+                            <div class="linkpva-product-body"><span class="linkpva-product-category">Old Account</span>
+                                <h3><a href="product-details.html">5+ Years Aged Account</a></h3>
+                                <ul>
+                                    <li><i class="bi bi-check2"></i> 5+ year age range</li>
+                                    <li><i class="bi bi-check2"></i> Clear profile details</li>
+                                </ul>
+                                <div class="linkpva-product-footer"><strong>$39.00</strong><a
+                                        href="product-details.html" aria-label="View 5+ Years Aged Account"><i
+                                            class="bi bi-arrow-right"></i></a></div>
                             </div>
-                        </div>
+                        </article>
                     </div>
-                </div>
-                <div class="slider-btn-grp two">
-                    <div class="slider-btn related-product-slider-prev">
-                        <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                            <g>
-                                <path d="M2 6L10 12V0L2 6Z" />
-                            </g>
-                        </svg>
+                    <div class="col-md-6 col-lg-4">
+                        <article class="linkpva-product-card">
+                            <div class="linkpva-product-visual is-cyan"><span
+                                    class="linkpva-product-badge">PVA</span><img
+                                    src="assets/images/products/product-pva.webp" width="1200" height="750"
+                                    alt="Phone-verified account preview" loading="lazy" decoding="async"></div>
+                            <div class="linkpva-product-body"><span class="linkpva-product-category">PVA Account</span>
+                                <h3><a href="product-details.html">LinkedIn PVA Account</a></h3>
+                                <ul>
+                                    <li><i class="bi bi-check2"></i> PVA information</li>
+                                    <li><i class="bi bi-check2"></i> Multiple options</li>
+                                </ul>
+                                <div class="linkpva-product-footer"><strong>$29.00</strong><a
+                                        href="product-details.html" aria-label="View LinkedIn PVA Account"><i
+                                            class="bi bi-arrow-right"></i></a></div>
+                            </div>
+                        </article>
                     </div>
-                    <div class="slider-btn related-product-slider-next">
-                        <svg width="12" height="12" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                            <g>
-                                <path d="M10.6665 6L2.6665 12L2.6665 0L10.6665 6Z" />
-                            </g>
-                        </svg>
+                    <div class="col-md-6 col-lg-4">
+                        <article class="linkpva-product-card">
+                            <div class="linkpva-product-visual is-green"><span
+                                    class="linkpva-product-badge">Followers</span><img
+                                    src="assets/images/products/product-followers.webp" width="1200" height="750"
+                                    alt="Account audience preview" loading="lazy" decoding="async"></div>
+                            <div class="linkpva-product-body"><span class="linkpva-product-category">Followers
+                                    Account</span>
+                                <h3><a href="product-details.html">Account With 1K+ Followers</a></h3>
+                                <ul>
+                                    <li><i class="bi bi-check2"></i> 1K+ follower range</li>
+                                    <li><i class="bi bi-check2"></i> Account information</li>
+                                </ul>
+                                <div class="linkpva-product-footer"><strong>$79.00</strong><a
+                                        href="product-details.html" aria-label="View Account With Followers"><i
+                                            class="bi bi-arrow-right"></i></a></div>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     <?php
         wp_reset_postdata();
     }
@@ -408,7 +351,7 @@ if (class_exists('WooCommerce')) {
         if (!$product || !is_a($product, 'WC_Product')) {
             return;
         }
-        egns_woocommerce_related_products($product->get_id(), 8);
+        egns_woocommerce_related_products($product->get_id(), 3);
     }
     add_action('woocommerce_after_single_product_summary', 'egns_related_products_output', 20);
 
