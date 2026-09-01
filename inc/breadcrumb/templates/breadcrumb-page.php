@@ -51,8 +51,7 @@ $breadcrumb_display_heading = $breadcrumb_page_heading !== '' ? $breadcrumb_page
                 }
                 ?>
             </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.
-            </p>
+            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
         </div>
     </section>
 <?php endif; ?>

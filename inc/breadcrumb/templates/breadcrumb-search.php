@@ -23,8 +23,7 @@ $term = get_queried_object();
             <h1>
                 <?php printf(esc_html__('Exploring For: %s', 'linkpva'), esc_html(get_search_query())); ?>
             </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.
-            </p>
+            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
         </div>
     </section>
 <?php endif; ?>

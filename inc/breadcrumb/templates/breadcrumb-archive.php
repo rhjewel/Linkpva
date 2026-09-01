@@ -85,8 +85,7 @@ if ($is_woocommerce_archive && function_exists('woocommerce_page_title')) {
 
                 ?>
             </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.
-            </p>
+            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
         </div>
     </section>
 <?php endif; ?>
