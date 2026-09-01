@@ -1,6 +1,5 @@
 <?php
 
-use Egns\Inc\Header_Helper;
 use Egns\Helper\Egns_Helper;
 
 $enable_breadcrumb_by_theme = Egns_Helper::egns_get_theme_option('breadcrumb_enable');
@@ -23,7 +22,7 @@ $term = get_queried_object();
             <h1>
                 <?php printf(esc_html__('Exploring For: %s', 'linkpva'), esc_html(get_search_query())); ?>
             </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
+            <p><?php echo esc_html__('Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.','linkpva'); ?></p>
         </div>
     </section>
 <?php endif; ?>

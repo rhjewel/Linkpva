@@ -1,57 +1,33 @@
 <?php
 
-use Egns\Inc\Header_Helper;
 use Egns\Helper\Egns_Helper;
 
+$queried_object_id          = get_queried_object_id();
+$page_options               = get_post_meta($queried_object_id, 'egns_page_options', true);
+$page_options               = is_array($page_options) ? $page_options : array();
 $enable_breadcrumb_by_theme = Egns_Helper::egns_get_theme_option('breadcrumb_enable');
-$breadcrumb_enable_by_page  = Egns_Helper::egns_page_option_value('breadcrumb_enable_page');
-
-// Heading and short description: page value has priority over theme option
-$breadcrumb_heading         = Egns_Helper::egns_get_theme_option('breadcrumb_heading') ?? '';
-$breadcrumb_page_heading    = Egns_Helper::egns_page_option_value('breadcrumb_page_heading') ?? '';
-
-// Determine final values: page option first, then theme option
-$breadcrumb_display_heading = $breadcrumb_page_heading !== '' ? $breadcrumb_page_heading : $breadcrumb_heading;
+$breadcrumb_enable_by_page  = $page_options['breadcrumb_enable_page'] ?? '';
+$breadcrumb_page_heading    = trim((string) ($page_options['breadcrumb_page_heading'] ?? ''));
+$breadcrumb_page_short_desc = trim((string) ($page_options['breadcrumb_page_short_desc'] ?? ''));
+$breadcrumb_heading         = trim((string) Egns_Helper::egns_get_theme_option('breadcrumb_heading'));
+$breadcrumb_short_desc      = trim((string) Egns_Helper::egns_get_theme_option('breadcrumb_short_desc'));
+$default_heading            = trim((string) get_the_title($queried_object_id));
+$default_short_desc         = trim((string) get_post_field('post_excerpt', $queried_object_id));
+$breadcrumb_display_heading = '' !== $breadcrumb_page_heading ? $breadcrumb_page_heading : $breadcrumb_heading;
+$breadcrumb_display_heading = '' !== $breadcrumb_display_heading ? $breadcrumb_display_heading : $default_heading;
+$breadcrumb_display_desc    = '' !== $breadcrumb_page_short_desc ? $breadcrumb_page_short_desc : $breadcrumb_short_desc;
+$breadcrumb_display_desc    = '' !== $breadcrumb_display_desc ? $breadcrumb_display_desc : $default_short_desc;
+$breadcrumb_display_desc    = trim(wp_strip_all_tags($breadcrumb_display_desc));
 
 ?>
-<?php if (Egns\Helper\Egns_Helper::is_enabled($enable_breadcrumb_by_theme, $breadcrumb_enable_by_page)): ?>
+<?php if (Egns_Helper::is_enabled($enable_breadcrumb_by_theme, $breadcrumb_enable_by_page)): ?>
     <section class="linkpva-page-hero">
         <div class="container">
             <?php echo egns_breadcrumb(); ?>
-            <h1>
-                <?php
-                // page-level heading overrides theme heading; if set
-                // use that, otherwise fall back to the original title logic
-                if (! empty($breadcrumb_display_heading)) {
-                    echo wp_kses_post($breadcrumb_display_heading);
-                } else {
-                    if (is_category()) {
-                        echo esc_html__('Category: ', 'linkpva');
-                        single_cat_title();
-                    } elseif (is_tag()) {
-                        echo esc_html__('Tag: ', 'linkpva');
-                        single_tag_title();
-                    } elseif (is_author()) {
-                        echo esc_html__('Author: ', 'linkpva');
-                        the_author();
-                    } elseif (is_date()) {
-                        echo esc_html__('Date: ', 'linkpva');
-                        if (is_day()) {
-                            echo get_the_time('F j, Y');
-                        } elseif (is_month()) {
-                            echo get_the_time('F, Y');
-                        } elseif (is_year()) {
-                            echo get_the_time('Y');
-                        }
-                    } elseif (is_home()) {
-                        Egns\Helper\Egns_Helper::egns_translate('Blog');
-                    } else {
-                        the_title();
-                    }
-                }
-                ?>
-            </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
+            <h1><?php echo esc_html($breadcrumb_display_heading); ?></h1>
+            <?php if ($breadcrumb_display_desc): ?>
+                <p><?php echo esc_html($breadcrumb_display_desc); ?></p>
+            <?php endif; ?>
         </div>
     </section>
 <?php endif; ?>

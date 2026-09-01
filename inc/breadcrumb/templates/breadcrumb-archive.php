@@ -4,27 +4,87 @@ use Egns\Helper\Egns_Helper;
 
 $enable_breadcrumb_by_theme = Egns_Helper::egns_get_theme_option('breadcrumb_enable');
 $breadcrumb_enable_by_page  = Egns_Helper::egns_page_option_value('breadcrumb_enable_page');
+$breadcrumb_heading         = trim((string) Egns_Helper::egns_get_theme_option('breadcrumb_heading'));
+$breadcrumb_short_desc      = trim((string) Egns_Helper::egns_get_theme_option('breadcrumb_short_desc'));
+$archive_heading            = '';
+$archive_short_desc         = '';
+$default_heading            = '';
+$default_short_desc         = '';
+$archive_post_type          = '';
+$queried_object             = get_queried_object();
 
-// Default heading 
-$breadcrumb_heading         = Egns_Helper::egns_get_theme_option('breadcrumb_heading') ?? '';
-$breadcrumb_page_heading    = Egns_Helper::egns_page_option_value('breadcrumb_page_heading') ?? '';
+if (is_home() || is_category() || is_tag() || is_author() || is_date() || is_page_template('page-blog-grid.php')) {
+    $archive_post_type = 'post';
+} elseif (is_post_type_archive()) {
+    $archive_post_type = get_query_var('post_type');
+    $archive_post_type = is_array($archive_post_type) ? reset($archive_post_type) : $archive_post_type;
 
-// Final default values
-$breadcrumb_display_heading = $breadcrumb_page_heading !== '' ? $breadcrumb_page_heading : $breadcrumb_heading;
+    if (!$archive_post_type && $queried_object instanceof WP_Post_Type) {
+        $archive_post_type = $queried_object->name;
+    }
+} elseif ($queried_object instanceof WP_Term) {
+    $taxonomy = get_taxonomy($queried_object->taxonomy);
 
-$is_woocommerce_archive  = function_exists('is_shop') && (is_shop() || is_post_type_archive('product'));
-$is_woocommerce_taxonomy = function_exists('is_product_taxonomy') && is_product_taxonomy();
-
-
-/**
- * -------------------------------------------------------
- * Custom Post Type Archive + Taxonomy Override Logic
- * -------------------------------------------------------
- */
-
-if ($is_woocommerce_archive && function_exists('woocommerce_page_title')) {
-    $breadcrumb_display_heading = woocommerce_page_title(false);
+    if ($taxonomy && !empty($taxonomy->object_type)) {
+        $archive_post_type = reset($taxonomy->object_type);
+    }
 }
+
+$archive_option_keys = array(
+    'post'       => array(
+        'heading'     => 'breadcrumb_post_heading',
+        'description' => 'breadcrumb_post_short_desc',
+    ),
+    'career'     => array(
+        'heading'     => 'breadcrumb_cpt_career_heading',
+        'description' => 'breadcrumb_cpt_career_short_desc',
+    ),
+    'case-study' => array(
+        'heading'     => 'breadcrumb_cpt_case_heading',
+        'description' => 'breadcrumb_cpt_case_short_desc',
+    ),
+);
+
+if (isset($archive_option_keys[$archive_post_type])) {
+    $archive_heading    = trim((string) Egns_Helper::egns_get_theme_option($archive_option_keys[$archive_post_type]['heading']));
+    $archive_short_desc = trim((string) Egns_Helper::egns_get_theme_option($archive_option_keys[$archive_post_type]['description']));
+}
+
+if ($queried_object instanceof WP_Term) {
+    $default_heading    = $queried_object->name;
+    $default_short_desc = term_description($queried_object->term_id, $queried_object->taxonomy);
+} elseif (is_home()) {
+    $blog_page_id       = absint(get_option('page_for_posts'));
+    $default_heading    = $blog_page_id ? get_the_title($blog_page_id) : esc_html__('Blog', 'linkpva');
+    $default_short_desc = $blog_page_id ? get_post_field('post_excerpt', $blog_page_id) : '';
+} elseif (is_page_template('page-blog-grid.php')) {
+    $default_heading    = get_the_title(get_queried_object_id());
+    $default_short_desc = get_post_field('post_excerpt', get_queried_object_id());
+} elseif (function_exists('is_shop') && is_shop() && function_exists('woocommerce_page_title')) {
+    $shop_page_id       = function_exists('wc_get_page_id') ? wc_get_page_id('shop') : 0;
+    $default_heading    = woocommerce_page_title(false);
+    $default_short_desc = $shop_page_id > 0 ? get_post_field('post_excerpt', $shop_page_id) : '';
+} elseif (is_post_type_archive()) {
+    $post_type_object   = get_post_type_object($archive_post_type);
+    $default_heading    = post_type_archive_title('', false);
+    $default_short_desc = $post_type_object ? $post_type_object->description : '';
+
+    if ('' === trim((string) $default_heading) && $post_type_object) {
+        $default_heading = $post_type_object->labels->name;
+    }
+} elseif (is_author() && $queried_object instanceof WP_User) {
+    $default_heading    = $queried_object->display_name;
+    $default_short_desc = get_the_author_meta('description', $queried_object->ID);
+} else {
+    $default_heading    = get_the_archive_title();
+    $default_short_desc = get_the_archive_description();
+}
+
+$breadcrumb_display_heading = '' !== $archive_heading ? $archive_heading : $breadcrumb_heading;
+$breadcrumb_display_heading = '' !== $breadcrumb_display_heading ? $breadcrumb_display_heading : $default_heading;
+$breadcrumb_display_desc    = '' !== $archive_short_desc ? $archive_short_desc : $breadcrumb_short_desc;
+$breadcrumb_display_desc    = '' !== $breadcrumb_display_desc ? $breadcrumb_display_desc : $default_short_desc;
+$breadcrumb_display_desc    = trim(wp_strip_all_tags((string) $breadcrumb_display_desc));
 
 ?>
 
@@ -32,60 +92,10 @@ if ($is_woocommerce_archive && function_exists('woocommerce_page_title')) {
     <section class="linkpva-page-hero">
         <div class="container">
             <?php echo egns_breadcrumb(); ?>
-            <h1>
-                <?php
-
-                $term = get_queried_object();
-
-                if ($is_woocommerce_taxonomy && $term instanceof WP_Term) {
-                    if (is_tax('product_cat')) {
-                        echo esc_html__('Category: ', 'linkpva') . esc_html($term->name);
-                    } elseif (is_tax('product_tag')) {
-                        echo esc_html__('Tag: ', 'linkpva') . esc_html($term->name);
-                    } else {
-                        $taxonomy = get_taxonomy($term->taxonomy);
-                        $taxonomy_label = $taxonomy && !empty($taxonomy->labels->singular_name) ? $taxonomy->labels->singular_name : $term->taxonomy;
-
-                        echo esc_html($taxonomy_label . ': ') . esc_html($term->name);
-                    }
-                } elseif (is_tax() && $term) {
-                    if (strpos($term->taxonomy, 'category') !== false) {
-                        echo esc_html__('Category: ', 'linkpva') . esc_html($term->name);
-                    } elseif (strpos($term->taxonomy, 'tag') !== false) {
-                        echo esc_html__('Tag: ', 'linkpva') . esc_html($term->name);
-                    }
-                } else {
-
-                    // ----- CPT or Page Heading -----
-                    if (!empty($breadcrumb_display_heading)) {
-                        echo wp_kses_post($breadcrumb_display_heading);
-                    } else {
-                        // fallback: default WP logic
-                        if (is_category()) {
-                            echo esc_html__('Category: ', 'linkpva');
-                            single_cat_title();
-                        } elseif (is_tag()) {
-                            echo esc_html__('Tag: ', 'linkpva');
-                            single_tag_title();
-                        } elseif (is_author()) {
-                            echo esc_html__('Author: ', 'linkpva');
-                            the_author();
-                        } elseif (is_date()) {
-                            echo esc_html__('Date: ', 'linkpva');
-                            if (is_day()) echo get_the_time('F j, Y');
-                            elseif (is_month()) echo get_the_time('F, Y');
-                            elseif (is_year()) echo get_the_time('Y');
-                        } elseif (is_home()) {
-                            Egns\Helper\Egns_Helper::egns_translate('Blog');
-                        } else {
-                            the_title();
-                        }
-                    }
-                }
-
-                ?>
-            </h1>
-            <p>Explore buyer guides, account-type explanations, ordering information, and responsible-use resources.</p>
+            <h1><?php echo esc_html($breadcrumb_display_heading); ?></h1>
+            <?php if ($breadcrumb_display_desc): ?>
+                <p><?php echo esc_html($breadcrumb_display_desc); ?></p>
+            <?php endif; ?>
         </div>
     </section>
 <?php endif; ?>

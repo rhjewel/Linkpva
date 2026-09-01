@@ -1,6 +1,5 @@
 <?php
 
-use Egns\Inc\Header_Helper;
 use Egns\Helper\Egns_Helper;
 
 $enable_breadcrumb_by_theme = Egns_Helper::egns_get_theme_option('breadcrumb_enable');
