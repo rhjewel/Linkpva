@@ -2731,6 +2731,12 @@ svg {
     font-size: 12px;
     list-style: none;
 
+    li {
+        &::before {
+            display: none;
+        }
+    }
+
     a {
         color: var(--color-text-muted);
 
@@ -2741,6 +2747,7 @@ svg {
 
     i {
         font-size: 9px;
+        margin-right: 8px;
     }
 }
 

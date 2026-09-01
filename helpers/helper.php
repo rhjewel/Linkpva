@@ -759,28 +759,34 @@ if (!class_exists('Egns_Helper')) {
 		}
 
 		/**
-		 * calculating reading times
-		 * Merge main content + repeater data
-		 * @return void
+		 * Calculate the estimated reading time.
+		 *
+		 * @param string $content Main content.
+		 * @param array  $extra_contents Additional content to include.
+		 * @return int Reading time in minutes.
 		 */
 		public static function calculate_reading_time($content, $extra_contents = array())
 		{
-			// Merge main content + repeater data
-			$all_content = $content;
+			$all_content = (string) $content;
 
 			if (!empty($extra_contents) && is_array($extra_contents)) {
 				foreach ($extra_contents as $item) {
-					$all_content .= ' ' . $item;
+					if (is_scalar($item)) {
+						$all_content .= ' ' . $item;
+					}
 				}
 			}
 
-			// Count total words
-			$word_count = str_word_count(strip_tags($all_content));
+			$plain_text = strip_shortcodes($all_content);
+			$plain_text = wp_strip_all_tags($plain_text, true);
+			$plain_text = html_entity_decode($plain_text, ENT_QUOTES, get_bloginfo('charset'));
+			$word_count = preg_match_all("/[\p{L}\p{M}\p{N}]+(?:['’][\p{L}\p{M}\p{N}]+)*/u", $plain_text, $words);
+			$word_count = false === $word_count ? 0 : $word_count;
 
-			// Minimum is 1 minute
-			$reading_time = max(1, round($word_count / 100));
+			$words_per_minute = absint(apply_filters('linkpva_reading_words_per_minute', 200));
+			$words_per_minute = max(1, $words_per_minute);
 
-			return $reading_time;
+			return max(1, (int) ceil($word_count / $words_per_minute));
 		}
 
 

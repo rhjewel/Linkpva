@@ -2393,6 +2393,9 @@ svg {
   font-size: 12px;
   list-style: none;
 }
+.linkpva-breadcrumb li::before {
+  display: none;
+}
 .linkpva-breadcrumb a {
   color: var(--color-text-muted);
 }
@@ -2401,6 +2404,7 @@ svg {
 }
 .linkpva-breadcrumb i {
   font-size: 9px;
+  margin-right: 8px;
 }
 
 .linkpva-inner-section {
