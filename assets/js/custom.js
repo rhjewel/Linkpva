@@ -196,6 +196,22 @@
         });
     });
 
+    if (typeof Swiper !== "undefined") {
+        document.querySelectorAll(".linkpva-article-hero.is-gallery .blog-archive-slider").forEach(function (slider) {
+            const gallery = slider.closest(".linkpva-article-hero");
+            const slides = slider.querySelectorAll(".swiper-slide");
+
+            new Swiper(slider, {
+                loop: slides.length > 1,
+                slidesPerView: 1,
+                navigation: {
+                    nextEl: gallery.querySelector(".blog1-next"),
+                    prevEl: gallery.querySelector(".blog1-prev")
+                }
+            });
+        });
+    }
+
     document.querySelectorAll("[data-accordion] button").forEach(function (button) {
         button.addEventListener("click", function () {
             const accordion = button.closest("[data-accordion]");

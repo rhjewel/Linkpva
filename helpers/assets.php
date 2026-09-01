@@ -54,7 +54,7 @@ if (!class_exists('Egns_Assets')) {
                 'custom-main' => [
                     'src'     => EGNS_ASSETS_ROOT . '/js/custom.js',
                     'version' => filemtime(EGNS_ASSETS_ROOT_DIR . '/js/custom.js'),
-                    'deps'    => [],
+                    'deps'    => ['swiper'],
                 ],
 
             ];

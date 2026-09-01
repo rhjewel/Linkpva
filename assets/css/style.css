@@ -3360,7 +3360,7 @@ svg {
   justify-content: center;
   gap: 15px;
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .linkpva-article-hero {
@@ -3377,12 +3377,96 @@ svg {
   -o-object-fit: cover;
      object-fit: cover;
 }
+.linkpva-article-hero.is-gallery {
+  position: relative;
+}
+.linkpva-article-hero.is-gallery .swiper,
+.linkpva-article-hero.is-gallery .swiper-wrapper,
+.linkpva-article-hero.is-gallery .swiper-slide {
+  height: 100%;
+}
+.linkpva-article-hero.is-gallery .slider-arrows {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 22px;
+  left: 22px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+.linkpva-article-hero.is-gallery .swiper-prev-arrow,
+.linkpva-article-hero.is-gallery .swiper-next-arrow {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  place-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.linkpva-article-hero.is-gallery .swiper-prev-arrow:hover,
+.linkpva-article-hero.is-gallery .swiper-next-arrow:hover {
+  color: var(--color-surface);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.linkpva-article-hero.is-video {
+  height: auto;
+  aspect-ratio: 16/9;
+}
+.linkpva-article-hero.is-video iframe,
+.linkpva-article-hero.is-video video,
+.linkpva-article-hero.is-video .wp-video {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.linkpva-article-hero.is-audio {
+  display: flex;
+  height: auto;
+  min-height: 180px;
+  align-items: center;
+  padding: clamp(24px, 5vw, 55px);
+}
+.linkpva-article-hero.is-audio iframe,
+.linkpva-article-hero.is-audio audio,
+.linkpva-article-hero.is-audio .wp-audio-shortcode,
+.linkpva-article-hero.is-audio .mejs-container {
+  width: 100% !important;
+}
+.linkpva-article-hero.is-quote {
+  display: grid;
+  height: auto;
+  min-height: 280px;
+  padding: clamp(35px, 7vw, 85px);
+  place-items: center;
+}
+.linkpva-article-hero.is-quote blockquote {
+  max-width: 850px;
+  margin: 0;
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+}
+.linkpva-article-hero.is-quote blockquote p {
+  margin: 0;
+}
 
 .linkpva-article-layout {
   display: grid;
   grid-template-columns: 220px minmax(0, 720px);
   justify-content: center;
   gap: 50px;
+}
+.linkpva-article-layout.has-no-sidebar {
+  grid-template-columns: minmax(0, 720px);
 }
 
 .linkpva-toc {
@@ -3401,19 +3485,34 @@ svg {
   color: var(--color-text-muted);
   font-size: 13px;
 }
+.linkpva-toc ol li.toc-level-3 {
+  padding-left: 0;
+}
+.linkpva-toc ol li a {
+  color: inherit;
+}
+.linkpva-toc ol li a:hover {
+  color: var(--color-primary);
+}
 
 .linkpva-article-content {
-  color: #4d5a72;
+  min-width: 0;
+  color: var(--color-text);
   font-size: 15px;
   line-height: 1.9;
+}
+.linkpva-article-content > *:first-child {
+  margin-top: 0;
 }
 .linkpva-article-content h2 {
   margin: 42px 0 15px;
   font-size: 27px;
+  scroll-margin-top: 110px;
 }
 .linkpva-article-content h3 {
   margin: 30px 0 12px;
   font-size: 20px;
+  scroll-margin-top: 110px;
 }
 .linkpva-article-content ul,
 .linkpva-article-content ol {
@@ -3430,6 +3529,20 @@ svg {
   font-family: var(--font-heading);
   font-weight: 700;
 }
+.linkpva-article-content img {
+  max-width: 100%;
+  height: auto;
+}
+.linkpva-article-content .wp-block-table {
+  overflow-x: auto;
+}
+.linkpva-article-content > .page-paginations {
+  margin-top: 32px;
+}
+.linkpva-article-content > .comment-and-form-area {
+  width: 100%;
+  margin-top: 50px;
+}
 
 .linkpva-author-box {
   display: flex;
@@ -3439,6 +3552,9 @@ svg {
   padding: 24px;
   background: var(--color-background);
   border-radius: 13px;
+}
+.linkpva-author-box > div {
+  min-width: 0;
 }
 .linkpva-author-box > span {
   display: grid;
@@ -3460,7 +3576,9 @@ svg {
 }
 .linkpva-author-box p {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .linkpva-policy-layout {
@@ -3689,6 +3807,11 @@ svg {
   .linkpva-article-hero {
     height: 300px;
   }
+  .linkpva-article-hero.is-video,
+  .linkpva-article-hero.is-audio,
+  .linkpva-article-hero.is-quote {
+    height: auto;
+  }
 }
 @media (max-width: 575.98px) {
   .linkpva-content-card,
@@ -3715,5 +3838,9 @@ svg {
   }
   .linkpva-article-content {
     font-size: 15px;
+  }
+  .linkpva-author-box {
+    align-items: flex-start;
+    padding: 20px;
   }
 }/*# sourceMappingURL=style.css.map */

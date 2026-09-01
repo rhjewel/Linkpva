@@ -272,89 +272,78 @@ if (!class_exists('Egns_Helper')) {
 
 
 		/**
-		 * Show related posts
-		 * @param int $post_id give post ID number
+		 * Display published posts related by category.
+		 *
+		 * @param int $post_id Current post ID.
+		 * @return void
 		 */
 		public static function display_related_posts_by_category($post_id)
 		{
-			$categories = wp_get_post_categories($post_id);
+			$post_id = absint($post_id);
 
-			if (empty($categories)) {
+			if (!$post_id || 'post' !== get_post_type($post_id)) {
+				return;
+			}
+
+			$categories = wp_get_post_categories($post_id, array('fields' => 'ids'));
+
+			if (empty($categories) || is_wp_error($categories)) {
+				return;
+			}
+
+			$posts_per_page = absint(apply_filters('linkpva_related_posts_limit', 3, $post_id));
+
+			if (!$posts_per_page) {
 				return;
 			}
 
 			$args = array(
+				'post_type'           => 'post',
+				'post_status'         => 'publish',
 				'category__in'        => $categories,
 				'post__not_in'        => array($post_id),
-				'posts_per_page'      => 3,
-				'orderby'             => 'rand',
+				'posts_per_page'      => $posts_per_page,
+				'orderby'             => 'date',
+				'order'               => 'DESC',
 				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
 			);
 
+			$args          = apply_filters('linkpva_related_posts_query_args', $args, $post_id, $categories);
 			$related_posts = new \WP_Query($args);
 
 			if (!$related_posts->have_posts()) {
 				return;
 			}
+
+			$posts_page_id = absint(get_option('page_for_posts'));
+			$blog_url      = $posts_page_id ? get_permalink($posts_page_id) : home_url('/');
+			$blog_url      = $blog_url ?: home_url('/');
+			$heading_id    = 'linkpva-related-posts-heading-' . $post_id;
 ?>
-			<section class="linkpva-section linkpva-surface-section">
+			<section class="linkpva-section linkpva-surface-section" aria-labelledby="<?php echo esc_attr($heading_id); ?>">
 				<div class="container">
 					<div class="linkpva-heading-row">
-						<div class="linkpva-section-heading"><span class="linkpva-section-tag">Continue Reading</span>
-							<h2>Related Articles</h2>
-						</div><a class="linkpva-text-link" href="blog.html">All articles <i
-								class="bi bi-arrow-right"></i></a>
+						<div class="linkpva-section-heading">
+							<span class="linkpva-section-tag"><?php echo esc_html__('Continue Reading', 'linkpva'); ?></span>
+							<h2 id="<?php echo esc_attr($heading_id); ?>"><?php echo esc_html__('Related Articles', 'linkpva'); ?></h2>
+						</div>
+						<a class="linkpva-text-link" href="<?php echo esc_url($blog_url); ?>">
+							<?php echo esc_html__('All articles', 'linkpva'); ?> <i class="bi bi-arrow-right" aria-hidden="true"></i>
+						</a>
 					</div>
 					<div class="row g-4">
-						<div class="col-md-6 col-lg-4">
-							<article class="linkpva-blog-card"><a class="linkpva-blog-visual is-purple"
-									href="blog-details.html" aria-label="Read Understanding Aged LinkedIn Accounts"><img
-										src="assets/images/blog/blog-aged-accounts.webp" width="1200" height="750"
-										alt="Understanding aged account listings" loading="lazy"
-										decoding="async"><span>Account Types</span></a>
-								<div class="linkpva-blog-body">
-									<div class="linkpva-blog-meta"><span>Account Types</span><span>5 min read</span></div>
-									<h3><a href="blog-details.html">Understanding Aged LinkedIn Accounts</a></h3>
-									<p>Compare age ranges, available details, and useful buyer questions.</p><a
-										class="linkpva-read-more" href="blog-details.html">Read article <i
-											class="bi bi-arrow-right"></i></a>
-								</div>
-							</article>
-						</div>
-						<div class="col-md-6 col-lg-4">
-							<article class="linkpva-blog-card"><a class="linkpva-blog-visual is-green"
-									href="blog-details.html" aria-label="Read What to Check Before Completing an Order"><img
-										src="assets/images/blog/blog-order-check.webp" width="1200" height="750"
-										alt="Reviewing an order before checkout" loading="lazy" decoding="async"><span>Order
-										Help</span></a>
-								<div class="linkpva-blog-body">
-									<div class="linkpva-blog-meta"><span>Order Help</span><span>4 min read</span></div>
-									<h3><a href="blog-details.html">What to Check Before Completing an Order</a></h3>
-									<p>Review product specifications, delivery details, and applicable policies.</p><a
-										class="linkpva-read-more" href="blog-details.html">Read article <i
-											class="bi bi-arrow-right"></i></a>
-								</div>
-							</article>
-						</div>
-						<div class="col-md-6 col-lg-4">
-							<article class="linkpva-blog-card"><a class="linkpva-blog-visual" href="blog-details.html"
-									aria-label="Read Reading Marketplace Policies Carefully"><img
-										src="assets/images/blog/blog-policies.webp" width="1200" height="750"
-										alt="Reading marketplace policies carefully" loading="lazy"
-										decoding="async"><span>Responsible Use</span></a>
-								<div class="linkpva-blog-body">
-									<div class="linkpva-blog-meta"><span>Responsible Use</span><span>6 min read</span></div>
-									<h3><a href="blog-details.html">Reading Marketplace Policies Carefully</a></h3>
-									<p>Understand delivery conditions, customer responsibilities, and support terms.</p><a
-										class="linkpva-read-more" href="blog-details.html">Read article <i
-											class="bi bi-arrow-right"></i></a>
-								</div>
-							</article>
-						</div>
+						<?php while ($related_posts->have_posts()) : ?>
+							<?php
+							$related_posts->the_post();
+							self::egns_template_part('blog', 'templates/grid/post/post', 'default');
+							?>
+						<?php endwhile; ?>
 					</div>
 				</div>
 			</section>
 			<?php
+			wp_reset_postdata();
 		}
 
 
@@ -787,6 +776,60 @@ if (!class_exists('Egns_Helper')) {
 			$words_per_minute = max(1, $words_per_minute);
 
 			return max(1, (int) ceil($word_count / $words_per_minute));
+		}
+
+		/**
+		 * Add unique anchors to article headings and prepare table of contents data.
+		 *
+		 * @param string $content Filtered post content.
+		 * @return array Prepared content and headings.
+		 */
+		public static function prepare_post_content_with_toc($content)
+		{
+			$headings = array();
+			$used_ids = array();
+
+			$prepared_content = preg_replace_callback('/<h([2-3])([^>]*)>(.*?)<\/h\1>/is', function ($matches) use (&$headings, &$used_ids) {
+				$level        = absint($matches[1]);
+				$attributes   = $matches[2];
+				$heading_html = $matches[3];
+				$heading_text = trim(wp_strip_all_tags(html_entity_decode($heading_html, ENT_QUOTES, get_bloginfo('charset'))));
+
+				if ('' === $heading_text) {
+					return $matches[0];
+				}
+
+				$heading_id = '';
+
+				if (preg_match('/\sid\s*=\s*(["\'])(.*?)\1/i', $attributes, $id_match)) {
+					$heading_id = sanitize_title($id_match[2]);
+				}
+
+				$heading_id = '' !== $heading_id ? $heading_id : sanitize_title($heading_text);
+				$heading_id = '' !== $heading_id ? $heading_id : 'article-section';
+				$base_id    = $heading_id;
+				$suffix     = 2;
+
+				while (isset($used_ids[$heading_id])) {
+					$heading_id = $base_id . '-' . $suffix;
+					$suffix++;
+				}
+
+				$used_ids[$heading_id] = true;
+				$attributes            = preg_replace('/\s+id\s*=\s*(["\']).*?\1/i', '', $attributes);
+				$headings[]             = array(
+					'id'    => $heading_id,
+					'level' => $level,
+					'title' => $heading_text,
+				);
+
+				return '<h' . $level . $attributes . ' id="' . esc_attr($heading_id) . '">' . $heading_html . '</h' . $level . '>';
+			}, (string) $content);
+
+			return array(
+				'content'  => null !== $prepared_content ? $prepared_content : $content,
+				'headings' => $headings,
+			);
 		}
 
 

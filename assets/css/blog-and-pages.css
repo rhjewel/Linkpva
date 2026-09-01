@@ -633,7 +633,7 @@ form.post-password-form input[type="submit"] {
 }
 
 .comment-respond .form-inner textarea {
-  min-height: 150px;
+  height: 170px;
   resize: vertical;
 }
 

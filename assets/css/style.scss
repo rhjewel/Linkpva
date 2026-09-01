@@ -3785,7 +3785,7 @@ svg {
     justify-content: center;
     gap: 15px;
     color: var(--color-text-muted);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .linkpva-article-hero {
@@ -3801,6 +3801,98 @@ svg {
         height: 100%;
         object-fit: cover;
     }
+
+    &.is-gallery {
+        position: relative;
+
+        .swiper,
+        .swiper-wrapper,
+        .swiper-slide {
+            height: 100%;
+        }
+
+        .slider-arrows {
+            position: absolute;
+            z-index: 2;
+            top: 50%;
+            right: 22px;
+            left: 22px;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        .swiper-prev-arrow,
+        .swiper-next-arrow {
+            display: grid;
+            width: 44px;
+            height: 44px;
+            color: var(--color-accent);
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            box-shadow: var(--shadow-sm);
+            place-items: center;
+            pointer-events: auto;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--color-surface);
+                background: var(--color-primary);
+                border-color: var(--color-primary);
+            }
+        }
+    }
+
+    &.is-video {
+        height: auto;
+        aspect-ratio: 16 / 9;
+
+        iframe,
+        video,
+        .wp-video {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    &.is-audio {
+        display: flex;
+        height: auto;
+        min-height: 180px;
+        align-items: center;
+        padding: clamp(24px, 5vw, 55px);
+
+        iframe,
+        audio,
+        .wp-audio-shortcode,
+        .mejs-container {
+            width: 100% !important;
+        }
+    }
+
+    &.is-quote {
+        display: grid;
+        height: auto;
+        min-height: 280px;
+        padding: clamp(35px, 7vw, 85px);
+        place-items: center;
+
+        blockquote {
+            max-width: 850px;
+            margin: 0;
+            color: var(--color-accent);
+            font-family: var(--font-heading);
+            font-size: clamp(1.45rem, 3vw, 2.35rem);
+            font-weight: 700;
+            line-height: 1.45;
+            text-align: center;
+
+            p {
+                margin: 0;
+            }
+        }
+    }
 }
 
 .linkpva-article-layout {
@@ -3808,6 +3900,10 @@ svg {
     grid-template-columns: 220px minmax(0, 720px);
     justify-content: center;
     gap: 50px;
+
+    &.has-no-sidebar {
+        grid-template-columns: minmax(0, 720px);
+    }
 }
 
 .linkpva-toc {
@@ -3826,23 +3922,42 @@ svg {
             margin-top: 8px;
             color: var(--color-text-muted);
             font-size: 13px;
+
+            &.toc-level-3 {
+                padding-left: 0;
+            }
+
+            a {
+                color: inherit;
+
+                &:hover {
+                    color: var(--color-primary);
+                }
+            }
         }
     }
 }
 
 .linkpva-article-content {
-    color: #4d5a72;
+    min-width: 0;
+    color: var(--color-text);
     font-size: 15px;
     line-height: 1.9;
+
+    >*:first-child {
+        margin-top: 0;
+    }
 
     h2 {
         margin: 42px 0 15px;
         font-size: 27px;
+        scroll-margin-top: 110px;
     }
 
     h3 {
         margin: 30px 0 12px;
         font-size: 20px;
+        scroll-margin-top: 110px;
     }
 
     ul,
@@ -3861,6 +3976,24 @@ svg {
         font-family: var(--font-heading);
         font-weight: 700;
     }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .wp-block-table {
+        overflow-x: auto;
+    }
+
+    >.page-paginations {
+        margin-top: 32px;
+    }
+
+    >.comment-and-form-area {
+        width: 100%;
+        margin-top: 50px;
+    }
 }
 
 .linkpva-author-box {
@@ -3871,6 +4004,10 @@ svg {
     padding: 24px;
     background: var(--color-background);
     border-radius: 13px;
+
+    >div {
+        min-width: 0;
+    }
 
     >span {
         display: grid;
@@ -3895,7 +4032,9 @@ svg {
 
     p {
         color: var(--color-text-muted);
-        font-size: 11px;
+        font-size: 13px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
     }
 }
 
@@ -4173,6 +4312,12 @@ svg {
     .linkpva-article-hero {
         height: 300px;
     }
+
+    .linkpva-article-hero.is-video,
+    .linkpva-article-hero.is-audio,
+    .linkpva-article-hero.is-quote {
+        height: auto;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -4208,5 +4353,10 @@ svg {
 
     .linkpva-article-content {
         font-size: 15px;
+    }
+
+    .linkpva-author-box {
+        align-items: flex-start;
+        padding: 20px;
     }
 }
