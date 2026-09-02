@@ -3386,6 +3386,10 @@ svg {
             box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
         }
     }
+
+    &.has-single-tab {
+        grid-template-columns: 1fr;
+    }
 }
 
 .linkpva-auth-tabs .linkpva-tab-panel {
@@ -3401,6 +3405,27 @@ svg {
         color: var(--color-text-muted);
         font-size: 13px;
     }
+
+    form.woocommerce-form {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+
+.linkpva-auth-generated-password {
+    margin-bottom: 18px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.linkpva-auth-logout {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
 }
 
 .linkpva-dashboard-layout {
