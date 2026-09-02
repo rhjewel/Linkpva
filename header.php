@@ -41,10 +41,6 @@ if (class_exists('WooCommerce') && (is_shop() || is_product_category() || is_pro
 
 	<!-- start #app -->
 	<div id="app">
-
-		<!-- For smooth scroll effect  -->
-		<div id="smooth-wrapper">
-			<div id="smooth-content">
 				<?php
 				// Hook to include page header template
 				do_action('egns_action_page_header_template');

@@ -144,19 +144,6 @@ if (!class_exists('Egns_Helper')) {
 		}
 
 
-		public static function get_people_post_option()
-		{
-			$posts = get_posts(['post_type' => 'people', 'posts_per_page' => -1]);
-			$options = [];
-
-			foreach ($posts as $post) {
-				$options[$post->ID] = get_the_title($post->ID);
-			}
-
-			return $options;
-		}
-
-
 		public static function get_career_post_option()
 		{
 			$posts = get_posts(['post_type' => 'career', 'posts_per_page' => -1]);
@@ -167,25 +154,6 @@ if (!class_exists('Egns_Helper')) {
 			}
 
 			return $options;
-		}
-
-
-		public static function get_people_category_options()
-		{
-			$terms = get_terms([
-				'taxonomy' => 'people-category',
-				'hide_empty' => false,
-			]);
-
-			$options = [];
-
-			if (!is_wp_error($terms)) {
-				foreach ($terms as $term) {
-					$options[$term->term_id] = $term->name;
-				}
-			}
-
-			return $options; // Just ID => Name
 		}
 
 
@@ -605,27 +573,6 @@ if (!class_exists('Egns_Helper')) {
 			}
 		}
 
-		/**
-		 * Return people Option Value Based on Given people Option ID.
-		 * @since 1.0.0
-		 * @param string $key1 people Option id. By Default It will return all value.
-		 * @param string $key2 people Option id. By Default It will return all value.
-		 * @param string $default people Option id. By Default It will return all value.
-		 * @return mixed people Option Value.
-		 */
-		public static function  egns_people_option_value($key1, $key2 = '', $default = '')
-		{
-			$people_options = get_post_meta(get_the_ID(), 'EGNS_PEOPLE_META_ID', true);
-			if (isset($people_options[$key1][$key2])) {
-				return $people_options[$key1][$key2];
-			} else {
-				if (isset($people_options[$key1])) {
-					return  $people_options[$key1];
-				} else {
-					return $default;
-				}
-			}
-		}
 
 
 		/**
@@ -675,17 +622,17 @@ if (!class_exists('Egns_Helper')) {
 		 *
 		 * @since   1.0.0
 		 */
-
 		public static function egns_translate($value)
 		{
 			echo sprintf(__('%s', 'linkpva'), $value);
 		}
+
+
 		/**
 		 * Escape any String with Translation
 		 *
 		 * @since   1.0.0
 		 */
-
 		public static function egns_translate_with_escape_($value)
 		{
 			$value = esc_html($value);
@@ -1537,10 +1484,6 @@ if (!class_exists('Egns_Helper')) {
 	<?php
 		}
 	} // end Main Egns Helper class
-
-
-
-
 
 
 }

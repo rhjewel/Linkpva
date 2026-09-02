@@ -1,7 +1,26 @@
 <?php
 
-if (class_exists('CSF') && !empty(Egns\Helper\Egns_Helper::egns_get_theme_option('footer_one_template'))) {
-    echo \Egns_Core\Egns_Helper::get_footer_data(Egns\Helper\Egns_Helper::egns_get_theme_option('footer_one_template'));
+use Egns\Helper\Egns_Helper;
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+$template_id = '';
+
+if (class_exists('Egns_Core')) {
+    // Page option priority first
+    $template_id = Egns_Helper::egns_page_option_value('footer_one_template');
+
+    // Then theme option
+    if (empty($template_id)) {
+        $template_id = Egns_Helper::egns_get_theme_option('footer_one_template');
+    }
+}
+
+
+if (! empty($template_id) && class_exists('\Egns_Core\Egns_Helper')) {
+    echo \Egns_Core\Egns_Helper::get_footer_data($template_id);
 } else { ?>
     <footer class="linkpva-footer">
         <div class="linkpva-footer-copyright text-center">

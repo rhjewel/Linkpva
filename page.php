@@ -13,15 +13,19 @@
  * @package egns
  */
 
+use Egns\Helper\Egns_Helper;
+
 get_header();
 
 if (!is_front_page()) :
     // Include breadcrumb template
     Egns\Helper\Egns_Helper::egns_template_part('breadcrumb', 'templates/breadcrumb-page');
 endif;
+
+$is_elementor = Egns_Helper::is_elementor();
 ?>
 
-<div class="page-wrapper linkpva-section">
+<div class="page-wrapper<?php echo $is_elementor ? '' : ' linkpva-section' ?>">
     <div class="page-content-wrapper">
         <?php
         // Hook to include additional content before blog post item
@@ -31,7 +35,7 @@ endif;
 
             the_content();
             // Pagination
-             Egns\Inc\Blog_Helper::egns_pagination();
+            Egns\Inc\Blog_Helper::egns_pagination();
 
             // Comment 
             if (comments_open() || get_comments_number()) :
