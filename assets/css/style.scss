@@ -355,6 +355,10 @@ svg {
         box-shadow: 0 10px 30px rgba(20, 38, 76, 0.07);
         backdrop-filter: blur(14px);
     }
+
+    .container {
+        position: relative;
+    }
 }
 
 .linkpva-header-inner {
@@ -560,9 +564,11 @@ svg {
 }
 
 .linkpva-search-form {
+    position: absolute;
+    right: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0;
     padding: 12px 0 18px;
 
     i {
@@ -576,7 +582,7 @@ svg {
         color: var(--color-accent);
         background: var(--color-background);
         border: 1px solid var(--color-border);
-        border-radius: 9px;
+        border-radius: 9px 0 0 9px;
 
         &:focus {
             border-color: var(--color-primary);
@@ -590,7 +596,7 @@ svg {
         padding: 0 20px;
         color: #fff;
         background: var(--color-primary);
-        border-radius: 9px;
+        border-radius: 0 9px 9px 0;
         font-weight: 700;
     }
 }
