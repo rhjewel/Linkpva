@@ -39,6 +39,10 @@ $archive_option_keys = array(
         'heading'     => 'breadcrumb_cpt_career_heading',
         'description' => 'breadcrumb_cpt_career_short_desc',
     ),
+    'product'     => array(
+        'heading'     => 'breadcrumb_cpt_product_heading',
+        'description' => 'breadcrumb_cpt_product_short_desc',
+    ),
     'case-study' => array(
         'heading'     => 'breadcrumb_cpt_case_heading',
         'description' => 'breadcrumb_cpt_case_short_desc',

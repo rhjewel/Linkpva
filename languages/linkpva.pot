@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-11T11:54:18+00:00\n"
+"POT-Creation-Date: 2026-09-02T11:40:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: Linkpva\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the theme
 #: style.css
-msgid "Linkpva - Modern Business Consulting WordPress Theme is a modern, powerful, and highly customizable WordPress theme designed for SaaS startups, software companies, technology businesses, IT service providers, digital agencies, and app landing pages. Built with a clean design and advanced functionality, Linkpva helps you create a professional website that perfectly showcases your software products and digital solutions. The theme is crafted using Elementor Page Builder, allowing you to design pages easily with a drag-and-drop interface. Linkpva is fully responsive and optimized for speed and search engines, ensuring your website performs smoothly across all devices and ranks well on search engines."
+msgid "Linkpva is a premium, modern WordPress theme built specifically for consulting firms, corporate advisory agencies, financial consultants, tax & accounting professionals, and business strategy companies. Designed with a clean, authoritative aesthetic and powered by Elementor, Linkpva delivers everything you need to establish a credible, high-converting online presence for your professional services business."
 msgstr ""
 
 #. Author of the theme
