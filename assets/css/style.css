@@ -2938,11 +2938,8 @@ svg {
 }
 
 .linkpva-auth-wrap {
-  min-height: 680px;
   display: grid;
   place-items: center;
-  padding: 80px 0;
-  background: var(--color-background);
 }
 .linkpva-auth-wrap .container {
   display: grid;
