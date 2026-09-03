@@ -51,6 +51,11 @@ if (!class_exists('Egns_Assets')) {
                     'version' => filemtime(EGNS_ASSETS_ROOT_DIR . '/js/jquery.nice-select.min.js'),
                     'deps'    => ['jquery'],
                 ],
+                'particles-main' => [
+                    'src'     => EGNS_ASSETS_ROOT . '/js/particles.js',
+                    'version' => filemtime(EGNS_ASSETS_ROOT_DIR . '/js/particles.js'),
+                    'deps'    => [],
+                ],
                 'custom-main' => [
                     'src'     => EGNS_ASSETS_ROOT . '/js/custom.js',
                     'version' => filemtime(EGNS_ASSETS_ROOT_DIR . '/js/custom.js'),
